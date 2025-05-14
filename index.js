@@ -22,6 +22,14 @@ app.use(ReportRouter);
 
 app.use("/file-uploads", express.static("./file-uploads"));
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "client/build")));
+
+  app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  });
+}
+
 app.listen(port, () => {
   console.log(`Server is running at port: ${port}`);
 });
