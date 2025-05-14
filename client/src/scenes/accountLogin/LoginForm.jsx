@@ -2,7 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Row, Col, Button, Typography } from "antd";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import { UserOutlined, LockOutlined, PoweroffOutlined, SyncOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  LockOutlined,
+  PoweroffOutlined,
+  SyncOutlined,
+} from "@ant-design/icons";
 import { Box, Link } from "@mui/material";
 import useStyles from "./style";
 
@@ -58,7 +63,7 @@ const LoginForm = (props) => {
         localStorage.setItem("accountToken", lastElement.token);
         window.location.reload();
         setTimeout(() => {
-          history('/dashboard');
+          history("/dashboard");
         }, 1000);
       }, 3000);
     } else {
@@ -164,7 +169,7 @@ const LoginForm = (props) => {
               <Button
                 htmlType="submit"
                 // type="primary"
-                style={{ backgroundColor: "blue", color: 'white' }}
+                style={{ backgroundColor: "blue", color: "white" }}
                 icon={<PoweroffOutlined />}
                 loading={
                   loadings[5] && {

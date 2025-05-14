@@ -1,18 +1,14 @@
-const AccountModel = require('../models/AccountModel');
+const AccountModel = require("../models/AccountModel");
 const cipher = require("bcryptjs");
-const LoginHistoryModel = require('../models/LoginHistoryModel');
+const LoginHistoryModel = require("../models/LoginHistoryModel");
 
 const AccountLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const userEmail = await AccountModel.findOne({
       email: email,
-      // acctStatus: "ACTIVE",
+      acctStatus: "ACTIVE",
     });
-
-    if (userEmail.acctStatus !== 'ACTIVE') {
-      return res.status(401).json({ body: "Something went wrong. Please contact your Administrator!" });
-    }
 
     if (userEmail) {
       const isMatch = await cipher.compare(password, userEmail.password);
@@ -27,7 +23,8 @@ const AccountLogin = async (req, res) => {
           httpOnly: true,
         });
 
-        const { _id, firstName, middleName, lastName, userType, email } = userEmail;
+        const { _id, firstName, middleName, lastName, userType, email } =
+          userEmail;
 
         const loginHistoryDetails = new LoginHistoryModel({
           userId: _id.toString(),
@@ -36,7 +33,7 @@ const AccountLogin = async (req, res) => {
           lastName,
           userType,
           created: new Date().toISOString(),
-          email
+          email,
         });
 
         await loginHistoryDetails.save();
@@ -80,7 +77,18 @@ const AccountValidate = async (req, res) => {
 };
 
 const AccountSignup = async (req, res) => {
-  const { userId, firstName, middleName, lastName, contact, address, gender, userType, email, password } = req.body;
+  const {
+    userId,
+    firstName,
+    middleName,
+    lastName,
+    contact,
+    address,
+    gender,
+    userType,
+    email,
+    password,
+  } = req.body;
 
   try {
     const validate = await AccountModel.findOne({ email });
@@ -97,12 +105,12 @@ const AccountSignup = async (req, res) => {
       address: address.toUpperCase(),
       contact,
       gender,
-      userType: userType ? userType : 'STUDENT',
+      userType: userType ? userType : "STUDENT",
       password,
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
-      acctStatus: 'ACTIVE',
-      email
+      acctStatus: "ACTIVE",
+      email,
     });
     const data = await userDetails.save();
     return res.status(200).json({ status: 200, body: data });
@@ -114,7 +122,10 @@ const AccountSignup = async (req, res) => {
 
 const ForgotPasswordVerifyEmail = async (req, res) => {
   try {
-    const getEmail = await AccountModel.findOne({ email: req.params.email, userType: 'STUDENT' });
+    const getEmail = await AccountModel.findOne({
+      email: req.params.email,
+      userType: "STUDENT",
+    });
     if (getEmail) {
       return res.status(200).json({
         status: 200,
@@ -137,10 +148,15 @@ const ForgotPasswordUpdatePassword = async (req, res) => {
     const email = req?.params.email;
     const password = await cipher.hash(req.body.password, 12);
 
-    const getEmail = await AccountModel.findOne({ email: email, userType: 'STUDENT' });
+    const getEmail = await AccountModel.findOne({
+      email: email,
+      userType: "STUDENT",
+    });
 
     if (!getEmail) {
-      return res.status(401).json({ body: "Something went wrong. Please contact your Administrator!" });
+      return res.status(401).json({
+        body: "Something went wrong. Please contact your Administrator!",
+      });
     }
 
     await getEmail.updateOne({
@@ -155,7 +171,13 @@ const ForgotPasswordUpdatePassword = async (req, res) => {
   }
 };
 
-const AccountLoginHistory = async (req, res) => { };
+const AccountLoginHistory = async (req, res) => {};
 
-
-module.exports = { AccountSignup, ForgotPasswordVerifyEmail, ForgotPasswordUpdatePassword, AccountLogin, AccountValidate, AccountLogout };
+module.exports = {
+  AccountSignup,
+  ForgotPasswordVerifyEmail,
+  ForgotPasswordUpdatePassword,
+  AccountLogin,
+  AccountValidate,
+  AccountLogout,
+};

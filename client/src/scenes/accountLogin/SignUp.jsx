@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Form,
-  Input,
-  Radio,
-  Row,
-  Col,
-  Typography,
-} from "antd";
+import { Form, Input, Radio, Row, Col, Typography } from "antd";
 import "./style.css";
 
 const { Text } = Typography;
@@ -146,13 +139,18 @@ const SignUp = (props) => {
                       message: "Please input your 11 digits mobile number!",
                     },
                     { whitespace: true },
-                    { min: 11, message: 'Contact Number must be at least 11 characters' },
-                    { max: 11, message: 'Contact Number cannot be longer than 11 characters' },
                     {
-                      pattern:
-                        /[0-9]/,
+                      min: 11,
+                      message: "Contact Number must be at least 11 characters",
+                    },
+                    {
+                      max: 11,
                       message:
-                        "Invalid Character",
+                        "Contact Number cannot be longer than 11 characters",
+                    },
+                    {
+                      pattern: /[0-9]/,
+                      message: "Invalid Character",
                     },
                   ]}
                 >
@@ -250,8 +248,14 @@ const SignUp = (props) => {
                       message: "Please input your password!",
                     },
                     { whitespace: true },
-                    { min: 8, message: 'Password must be at least 8 characters' },
-                    { max: 26, message: 'Password cannot be longer than 26 characters' },
+                    {
+                      min: 8,
+                      message: "Password must be at least 8 characters",
+                    },
+                    {
+                      max: 26,
+                      message: "Password cannot be longer than 26 characters",
+                    },
                     {
                       pattern:
                         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,26}$/,
@@ -301,10 +305,10 @@ const SignUp = (props) => {
                   <br />
                   <Text strong>Note: </Text>
                   <Text>
-                    Thank you for choosing to sign up for our Guidance Counseling Management System. We
-                    value your privacy and want to assure you that we are
-                    committed to protecting the personal information you
-                    provide.
+                    Thank you for choosing to sign up for our Guidance
+                    Counseling Management System. We value your privacy and want
+                    to assure you that we are committed to protecting the
+                    personal information you provide.
                   </Text>
                 </div>
               </Col>

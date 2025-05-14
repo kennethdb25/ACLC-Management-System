@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useContext } from "react";
-import { AccountTypeData } from './data';
+import { AccountTypeData } from "./data";
 import { Box, Typography, useTheme } from "@mui/material";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import { tokens } from "../../theme";
@@ -17,20 +17,19 @@ import {
   message,
   Tag,
   Radio,
-  Popconfirm
+  Popconfirm,
 } from "antd";
 import {
   SearchOutlined,
   CloseCircleOutlined,
   CheckCircleOutlined,
   PlusCircleOutlined,
-  FormOutlined
+  FormOutlined,
 } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import moment from 'moment';
-import './style.css';
-import { LoginContext } from '../../context/Context';
-
+import moment from "moment";
+import "./style.css";
+import { LoginContext } from "../../context/Context";
 
 const Accounts = () => {
   const theme = useTheme();
@@ -46,8 +45,8 @@ const Accounts = () => {
 
   // Data
   const getStudentAccount = async () => {
-    const data = await fetch('/api/accounts', {
-      method: 'GET',
+    const data = await fetch("/api/accounts", {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
@@ -71,17 +70,15 @@ const Accounts = () => {
     total: studentAccountCount,
   });
 
-
   // Modal
   const handleOpenModal = () => {
     setIsOpen(true);
   };
 
-  const cancel = e => {
+  const cancel = (e) => {
     console.log(e);
-    message.info('CANCELLED');
+    message.info("CANCELLED");
   };
-
 
   const onClose = () => {
     setIsOpen(false);
@@ -89,7 +86,7 @@ const Accounts = () => {
   };
 
   const onFinish = async (values) => {
-    const data = await fetch('/api/registration', {
+    const data = await fetch("/api/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -109,33 +106,38 @@ const Accounts = () => {
   };
 
   const onDeactivateAccount = async (record) => {
-    const data = await fetch(`/api/change-account-status?userId=${record._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const data = await fetch(
+      `/api/change-account-status?userId=${record._id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const res = await data.json();
 
     if (res.status === 200) {
-      toast.success(res.body.acctStatus === "ACTIVE"
-        ? "Account Activated Succesfully"
-        : "Account Deactivated Successfully", {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      toast.success(
+        res.body.acctStatus === "ACTIVE"
+          ? "Account Activated Succesfully"
+          : "Account Deactivated Successfully",
+        {
+          position: "top-center",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        }
+      );
       getStudentAccount();
     }
   };
-
 
   // Table
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -255,12 +257,12 @@ const Accounts = () => {
       width: "10%",
       render: (_, { userType }) => {
         let color;
-        if (userType === 'ADMIN') {
-          color = 'red';
-        } else if (userType === 'GUIDANCE OFFICER') {
-          color = 'blue';
+        if (userType === "ADMIN") {
+          color = "red";
+        } else if (userType === "GUIDANCE OFFICER") {
+          color = "blue";
         } else {
-          color = 'green';
+          color = "green";
         }
         return (
           <Tag color={color} key={userType}>
@@ -280,7 +282,7 @@ const Accounts = () => {
         {
           text: "STUDENT",
           value: "STUDENT",
-        }
+        },
       ],
       onFilter: (value, record) => record.userType.indexOf(value) === 0,
     },
@@ -290,10 +292,8 @@ const Accounts = () => {
       key: "created",
       width: "10%",
       render: (_, { created }) => {
-        return (
-          moment(created).format('MMMM Do YYYY, h:mm:ss a')
-        );
-      }
+        return moment(created).format("MMMM Do YYYY, h:mm:ss a");
+      },
     },
     {
       title: "Status",
@@ -302,10 +302,10 @@ const Accounts = () => {
       width: "10%",
       render: (_, { acctStatus }) => {
         let color;
-        if (acctStatus === 'ACTIVE') {
-          color = 'green';
+        if (acctStatus === "ACTIVE") {
+          color = "green";
         } else {
-          color = 'red';
+          color = "red";
         }
         return (
           <Tag color={color} key={acctStatus}>
@@ -328,7 +328,7 @@ const Accounts = () => {
     {
       title: (
         <>
-          {loginData?.body?.userType === 'ADMIN' ? (
+          {loginData?.body?.userType === "ADMIN" ? (
             <Button
               type="primary"
               shape="round"
@@ -337,11 +337,12 @@ const Accounts = () => {
               style={{
                 backgroundColor: "#000080",
                 border: "1px solid #d9d9d9",
-                float: 'right'
+                float: "right",
               }}
             >
               CREATE EMPLOYEE ACCOUNT
-            </Button>) : null}
+            </Button>
+          ) : null}
         </>
       ),
       dataIndex: "",
@@ -353,8 +354,16 @@ const Accounts = () => {
             style={{ display: "flex", justifyContent: "center", gap: "10px" }}
           >
             <Popconfirm
-              title={record.acctStatus === "ACTIVE" ? "DEACTIVATE ACCOUNT" : "ACTIVATE ACCOUNT"}
-              description={record.acctStatus === "ACTIVE" ? "Are you sure to deactivate the account?" : "Are you sure to activate the account?"}
+              title={
+                record.acctStatus === "ACTIVE"
+                  ? "DEACTIVATE ACCOUNT"
+                  : "ACTIVATE ACCOUNT"
+              }
+              description={
+                record.acctStatus === "ACTIVE"
+                  ? "Are you sure to deactivate the account?"
+                  : "Are you sure to activate the account?"
+              }
               onConfirm={() => {
                 onDeactivateAccount(record);
               }}
@@ -364,9 +373,19 @@ const Accounts = () => {
             >
               <Button
                 key="view"
-                icon={record.acctStatus === "ACTIVE" ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
+                icon={
+                  record.acctStatus === "ACTIVE" ? (
+                    <CloseCircleOutlined />
+                  ) : (
+                    <CheckCircleOutlined />
+                  )
+                }
                 type="primary"
-                style={{ backgroundColor: record.acctStatus === "ACTIVE" ? "red" : "green", border: "1px solid #d9d9d9" }}
+                style={{
+                  backgroundColor:
+                    record.acctStatus === "ACTIVE" ? "red" : "green",
+                  border: "1px solid #d9d9d9",
+                }}
               >
                 {record.acctStatus === "ACTIVE" ? "DEACTIVATE" : "ACTIVATE"}
               </Button>
@@ -390,11 +409,7 @@ const Accounts = () => {
       <Header title="ACCOUNTS" subtitle="Managing the User Accounts" />
       {/* <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} /> */}
       <Box marginBottom="20px">
-        <Typography
-          variant="h5"
-          fontWeight="600"
-          color={colors.grey[100]}
-        >
+        <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
           USER ACCOUNTS
         </Typography>
       </Box>
@@ -428,7 +443,7 @@ const Accounts = () => {
             }
           >
             <Button type="primary" onClick={() => form.submit()}>
-              <FormOutlined style={{ marginTop: '1px' }} /> CONFIRM REGISTRATION
+              <FormOutlined style={{ marginTop: "1px" }} /> CONFIRM REGISTRATION
             </Button>
           </div>,
         ]}
@@ -564,13 +579,19 @@ const Accounts = () => {
                         message: "Please input your 11 digits mobile number!",
                       },
                       { whitespace: true },
-                      { min: 11, message: 'Contact Number must be at least 11 characters' },
-                      { max: 11, message: 'Contact Number cannot be longer than 11 characters' },
                       {
-                        pattern:
-                          /[0-9]/,
+                        min: 11,
                         message:
-                          "Invalid Character",
+                          "Contact Number must be at least 11 characters",
+                      },
+                      {
+                        max: 11,
+                        message:
+                          "Contact Number cannot be longer than 11 characters",
+                      },
+                      {
+                        pattern: /[0-9]/,
+                        message: "Invalid Character",
                       },
                     ]}
                   >
@@ -647,7 +668,7 @@ const Accounts = () => {
                   >
                     <Select
                       placeholder="Select an Account Type"
-                    // onChange={onGradeChange}
+                      // onChange={onGradeChange}
                     >
                       {AccountTypeData.map((value, index) => (
                         <Select.Option key={index} value={value.value}>
@@ -699,8 +720,14 @@ const Accounts = () => {
                         message: "Please input your password!",
                       },
                       { whitespace: true },
-                      { min: 8, message: 'Password must be at least 8 characters' },
-                      { max: 26, message: 'Password cannot be longer than 26 characters' },
+                      {
+                        min: 8,
+                        message: "Password must be at least 8 characters",
+                      },
+                      {
+                        max: 26,
+                        message: "Password cannot be longer than 26 characters",
+                      },
                       {
                         pattern:
                           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,26}$/,
@@ -751,7 +778,7 @@ const Accounts = () => {
           </Row>
         </Form>
       </Drawer>
-    </Box >
+    </Box>
   );
 };
 

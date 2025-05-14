@@ -1,7 +1,7 @@
-const AppointmentModel = require('../models/AppointmentModel');
-const NotificationModel = require('../models/NotificationModel');
-const PerformanceModel = require('../models/PerformanceModel');
-const ViolationModel = require('../models/ViolationModel');
+const AppointmentModel = require("../models/AppointmentModel");
+const NotificationModel = require("../models/NotificationModel");
+const PerformanceModel = require("../models/PerformanceModel");
+const ViolationModel = require("../models/ViolationModel");
 
 const AddPerformance = async (req, res) => {
   try {
@@ -13,11 +13,11 @@ const AddPerformance = async (req, res) => {
 
     const notificationDetails = new NotificationModel({
       requestId: finalRecord[0]?._id,
-      title: 'Peformance Monitoring',
-      description: 'You have a Newly Added for Monitoring',
-      type: 'Form',
-      adminRead: 'No',
-      created: new Date()
+      title: "Peformance Monitoring",
+      description: "You have a Newly Added for Monitoring",
+      type: "Form",
+      adminRead: "No",
+      created: new Date(),
     });
 
     await notificationDetails.save();
@@ -26,7 +26,10 @@ const AddPerformance = async (req, res) => {
     console.log(error);
     return res
       .status(422)
-      .json({ status: 422, body: "Something went wrong. Please contact the administrator" });
+      .json({
+        status: 422,
+        body: "Something went wrong. Please contact the administrator",
+      });
   }
 };
 
@@ -49,7 +52,11 @@ const updatePerformanceRecord = async (req, res) => {
     );
 
     if (!updated) {
-      return res.status(401).json({ body: "Something went wrong. Please contact your Administrator!" });
+      return res
+        .status(401)
+        .json({
+          body: "Something went wrong. Please contact your Administrator!",
+        });
     }
 
     return res.status(200).json({ status: 200, body: updated });
@@ -64,7 +71,9 @@ const getAppointmentsPerStudent = async (req, res) => {
 
   try {
     const getAppointmentPerStudent = await AppointmentModel.find({ email });
-    return res.status(200).json({ status: 200, body: getAppointmentPerStudent });
+    return res
+      .status(200)
+      .json({ status: 200, body: getAppointmentPerStudent });
   } catch (error) {
     console.log(error);
     return res.status(404).json(error);
@@ -83,7 +92,16 @@ const getAllAppointments = async (req, res) => {
 
 const addAnAppointment = async (req, res) => {
   try {
-    const { contact, date, email, requestorName, purpose, studentId, time, userId } = req.body;
+    const {
+      contact,
+      date,
+      email,
+      requestorName,
+      purpose,
+      studentId,
+      time,
+      userId,
+    } = req.body;
 
     const appointmentDetails = new AppointmentModel({
       contact,
@@ -103,11 +121,11 @@ const addAnAppointment = async (req, res) => {
     const notificationDetails = new NotificationModel({
       studentUserId: userId,
       requestId: data?._id,
-      title: 'New Appointment Scheduled',
-      description: 'You have a new appointment request',
-      type: 'Appointment',
-      adminRead: 'No',
-      created: new Date()
+      title: "New Appointment Scheduled",
+      description: "You have a new appointment request",
+      type: "Appointment",
+      adminRead: "No",
+      created: new Date(),
     });
 
     await notificationDetails.save();
@@ -116,7 +134,10 @@ const addAnAppointment = async (req, res) => {
     console.log(error);
     return res
       .status(422)
-      .json({ status: 422, body: "Something went wrong. Please contact the administrator" });
+      .json({
+        status: 422,
+        body: "Something went wrong. Please contact the administrator",
+      });
   }
 };
 
@@ -127,7 +148,11 @@ const updateAppointmentStatus = async (req, res) => {
     const getRequestForm = await AppointmentModel.findOne({ _id: id });
 
     if (!getRequestForm) {
-      return res.status(401).json({ body: "Something went wrong. Please contact your Administrator!" });
+      return res
+        .status(401)
+        .json({
+          body: "Something went wrong. Please contact your Administrator!",
+        });
     }
 
     getRequestForm.appointmentStatus = requestStatus;
@@ -144,7 +169,18 @@ const updateAppointmentStatus = async (req, res) => {
 
 const addViolation = async (req, res) => {
   try {
-    const { address, contact, firstName, gender, lastName, middleName, sanction, studentId, violation, violationDate } = req.body;
+    const {
+      address,
+      contact,
+      firstName,
+      gender,
+      lastName,
+      middleName,
+      sanction,
+      studentId,
+      violation,
+      violationDate,
+    } = req.body;
 
     const violationDetails = new ViolationModel({
       address,
@@ -158,7 +194,7 @@ const addViolation = async (req, res) => {
       violation,
       violationDate,
       violationStatus: "IN PROGRESS",
-      created: new Date()
+      created: new Date(),
     });
 
     const data = await violationDetails.save();
@@ -167,7 +203,10 @@ const addViolation = async (req, res) => {
     console.log(error);
     return res
       .status(422)
-      .json({ status: 422, body: "Something went wrong. Please contact the administrator" });
+      .json({
+        status: 422,
+        body: "Something went wrong. Please contact the administrator",
+      });
   }
 };
 
@@ -188,7 +227,11 @@ const updateViolationStatus = async (req, res) => {
     const getViolation = await ViolationModel.findOne({ _id: id });
 
     if (!getViolation) {
-      return res.status(401).json({ body: "Something went wrong. Please contact your Administrator!" });
+      return res
+        .status(401)
+        .json({
+          body: "Something went wrong. Please contact your Administrator!",
+        });
     }
 
     getViolation.violationStatus = requestStatus;
@@ -208,20 +251,22 @@ const getViolationData = async (req, res) => {
   try {
     const fields = await ViolationModel.find().distinct("violation");
     fields.map(async (field) => {
-      const data = await ViolationModel.find({ gender: "Male", violation: field })
-        .then(result => {
-          finalData.push({ x: field, y: result.length });
-          // console.log(result);
-        });
+      const data = await ViolationModel.find({
+        gender: "Male",
+        violation: field,
+      }).then((result) => {
+        finalData.push({ x: field, y: result.length });
+        // console.log(result);
+      });
     });
-  } catch (error) {
-
-  }
+  } catch (error) {}
 };
 
 const getUnreadNotificationForAdmin = async (req, res) => {
   try {
-    const getNotificationForAdmin = await NotificationModel.find({ adminRead: "No" }).sort({ created: -1 });
+    const getNotificationForAdmin = await NotificationModel.find({
+      adminRead: "No",
+    }).sort({ created: -1 });
     return res.status(200).json({ status: 200, body: getNotificationForAdmin });
   } catch (error) {
     console.log(error);
@@ -233,8 +278,13 @@ const getUnreadNotificationFOrStudent = async (req, res) => {
   const id = req.params.studentUserId || "";
 
   try {
-    const getNotificationForStudent = await NotificationModel.find({ studentRead: 'No', studentUserId: id.toString() }).sort({ created: -1 });
-    return res.status(200).json({ status: 200, body: getNotificationForStudent });
+    const getNotificationForStudent = await NotificationModel.find({
+      studentRead: "No",
+      studentUserId: id.toString(),
+    }).sort({ created: -1 });
+    return res
+      .status(200)
+      .json({ status: 200, body: getNotificationForStudent });
   } catch (error) {
     console.log(error);
     return res.status(404).json(error);
@@ -247,7 +297,11 @@ const updateNotification = async (req, res) => {
   try {
     const getNotification = await NotificationModel.findOne({ _id: id });
     if (!getNotification) {
-      return res.status(500).json({ body: "Something went wrong. Please contact your Administrator!" });
+      return res
+        .status(500)
+        .json({
+          body: "Something went wrong. Please contact your Administrator!",
+        });
     }
     getNotification.adminRead = "Yes";
 
@@ -260,4 +314,19 @@ const updateNotification = async (req, res) => {
   }
 };
 
-module.exports = { AddPerformance, GetPerformanceList, updatePerformanceRecord, getAppointmentsPerStudent, getAllAppointments, addAnAppointment, updateAppointmentStatus, addViolation, getAllViolation, updateViolationStatus, getUnreadNotificationForAdmin, getUnreadNotificationFOrStudent, updateNotification, getViolationData };
+module.exports = {
+  AddPerformance,
+  GetPerformanceList,
+  updatePerformanceRecord,
+  getAppointmentsPerStudent,
+  getAllAppointments,
+  addAnAppointment,
+  updateAppointmentStatus,
+  addViolation,
+  getAllViolation,
+  updateViolationStatus,
+  getUnreadNotificationForAdmin,
+  getUnreadNotificationFOrStudent,
+  updateNotification,
+  getViolationData,
+};

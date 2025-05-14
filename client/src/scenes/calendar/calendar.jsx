@@ -1,27 +1,34 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { Table, Tag, Divider, Drawer, Input, Space, Form, Row, Col, Select, DatePicker, message } from "antd";
 import {
-  Box,
-  Button,
-  useTheme,
-} from "@mui/material";
-import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
-import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
-import {
-  SearchOutlined,
-} from "@ant-design/icons";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+  Table,
+  Tag,
+  Divider,
+  Drawer,
+  Input,
+  Space,
+  Form,
+  Row,
+  Col,
+  Select,
+  DatePicker,
+  message,
+} from "antd";
+import { Box, Button, useTheme } from "@mui/material";
+import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+import { SearchOutlined } from "@ant-design/icons";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
-import { LoginContext } from '../../context/Context';
+import { LoginContext } from "../../context/Context";
 import Highlighter from "react-highlight-words";
-import moment from 'moment';
-import { ViewDetailsMOdal } from './Modal';
-import { PurposeData } from './Data';
+import moment from "moment";
+import { ViewDetailsMOdal } from "./Modal";
+import { PurposeData } from "./Data";
 
 const { Option } = Select;
 
@@ -78,23 +85,38 @@ const Calendar = () => {
   const disableDates = (current) => {
     return (
       current.isBefore(dayjs(), "day") ||
-      current.day() === 0 || current.day() === 6 ||
+      current.day() === 0 ||
+      current.day() === 6 ||
       fullyBookedDates.includes(current.format("YYYY-MM-DD"))
     );
   };
 
-  const availableTime = ["8:30AM", "9:00AM", "9:30AM", "10:00AM", "10:30AM", "11:00AM", "11:30AM", "1:00PM", "1:30PM", "2:00PM", "2:30PM", "3:00PM", "3:30PM", "4:00PM", "4:30PM"].filter(
-    (time) => !bookedSlots.includes(time)
-  );
+  const availableTime = [
+    "8:30AM",
+    "9:00AM",
+    "9:30AM",
+    "10:00AM",
+    "10:30AM",
+    "11:00AM",
+    "11:30AM",
+    "1:00PM",
+    "1:30PM",
+    "2:00PM",
+    "2:30PM",
+    "3:00PM",
+    "3:30PM",
+    "4:00PM",
+    "4:30PM",
+  ].filter((time) => !bookedSlots.includes(time));
 
   const handleSubmit = async () => {
     let values = {};
     if (selectedDate === null && !selectedTime) {
-      message.error('Please select purpose, date and time');
+      message.error("Please select purpose, date and time");
       return;
     }
 
-    const formattedDate = selectedDate.format('YYYY-MM-DD');
+    const formattedDate = selectedDate.format("YYYY-MM-DD");
     const formattedTime = selectedTime;
 
     values.studentId = loginData?.body.identification;
@@ -145,7 +167,7 @@ const Calendar = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await fetch('/api/appointments', {
+      const data = await fetch("/api/appointments", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -157,7 +179,9 @@ const Calendar = () => {
         acc[appointment?.date] = (acc[appointment?.date] || 0) + 1;
         return acc;
       }, {});
-      const fullyBooked = Object.keys(bookedDates).filter((date) => bookedDates[date] >= 16);
+      const fullyBooked = Object.keys(bookedDates).filter(
+        (date) => bookedDates[date] >= 16
+      );
       setFullyBookedDates(fullyBooked);
     }
     fetchData();
@@ -167,14 +191,16 @@ const Calendar = () => {
   useEffect(() => {
     async function fetchData() {
       if (selectedDate) {
-        const data = await fetch('/api/appointments', {
+        const data = await fetch("/api/appointments", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
         const res = await data.json();
-        const filtered = res.body.filter((a) => a.date === selectedDate.format("YYYY-MM-DD")).map((a) => a.time);
+        const filtered = res.body
+          .filter((a) => a.date === selectedDate.format("YYYY-MM-DD"))
+          .map((a) => a.time);
         setBookedSlots(filtered);
       }
     }
@@ -183,23 +209,25 @@ const Calendar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
-
   const appointmentDataFetch = async () => {
     let data;
     if (loginData && loginData?.body?.userType !== "STUDENT") {
-      data = await fetch('/api/appointments', {
+      data = await fetch("/api/appointments", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
     } else {
-      data = await fetch(`/api/appointments/student?email=${loginData?.body.email}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      data = await fetch(
+        `/api/appointments/student?email=${loginData?.body.email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
 
     const res = await data.json();
@@ -325,10 +353,8 @@ const Calendar = () => {
       key: "date",
       width: "10%",
       render: (_, { date }) => {
-        return (
-          moment(date).format('LL')
-        );
-      }
+        return moment(date).format("LL");
+      },
     },
     {
       title: "Time",
@@ -343,12 +369,12 @@ const Calendar = () => {
       width: "10%",
       render: (_, { appointmentStatus }) => {
         let color;
-        if (appointmentStatus === 'APPROVED') {
-          color = 'green';
-        } else if (appointmentStatus === 'PENDING') {
-          color = 'blue';
+        if (appointmentStatus === "APPROVED") {
+          color = "green";
+        } else if (appointmentStatus === "PENDING") {
+          color = "blue";
         } else {
-          color = 'red';
+          color = "red";
         }
         return (
           <Tag color={color} key={appointmentStatus}>
@@ -374,7 +400,8 @@ const Calendar = () => {
           value: "PENDING",
         },
       ],
-      onFilter: (value, record) => record.requestStatus.indexOf(value) === 0,
+      onFilter: (value, record) =>
+        record.appointmentStatus.indexOf(value) === 0,
     },
     {
       title: "",
@@ -412,7 +439,10 @@ const Calendar = () => {
   return (
     <Box m="20px">
       <ToastContainer />
-      <Header title="Calendar" subtitle="Request New Appointment for Guidance Officer" />
+      <Header
+        title="Calendar"
+        subtitle="Request New Appointment for Guidance Officer"
+      />
       {loginData?.body?.userType === "STUDENT" ? (
         <>
           <Button
@@ -431,10 +461,18 @@ const Calendar = () => {
         </>
       ) : null}
 
-      <Divider orientation="center" orientationMargin="0" style={{ borderColor: 'blue' }}>
+      <Divider
+        orientation="center"
+        orientationMargin="0"
+        style={{ borderColor: "blue" }}
+      >
         <Header subtitle="LISTS OF APPOINTMENT" />
       </Divider>
-      <Table columns={columns} dataSource={listOfBookedDate} pagination={paginationAppointment} />
+      <Table
+        columns={columns}
+        dataSource={listOfBookedDate}
+        pagination={paginationAppointment}
+      />
 
       {/* View Details Modal */}
       {viewDetailsData ? (
@@ -447,7 +485,6 @@ const Calendar = () => {
           appointmentDataFetch={appointmentDataFetch}
         />
       ) : null}
-
 
       {/* Set an Appointment Drawer  */}
       <Drawer
@@ -509,7 +546,11 @@ const Calendar = () => {
                   style={{ width: "100%", marginBottom: 20 }}
                   onChange={(purpose) => setSelectedPurpose(purpose)}
                 >
-                  {PurposeData.map((value, index) => <Option key={index} value={value.value}>{value.name}</Option>)}
+                  {PurposeData.map((value, index) => (
+                    <Option key={index} value={value.value}>
+                      {value.name}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
               <Form.Item
@@ -560,7 +601,9 @@ const Calendar = () => {
                   style={{ width: "100%", marginBottom: 20 }}
                 >
                   {availableTime.length > 0 ? (
-                    availableTime.map((time) => <Option key={time}>{time}</Option>)
+                    availableTime.map((time) => (
+                      <Option key={time}>{time}</Option>
+                    ))
                   ) : (
                     <Option disabled>No Available Time</Option>
                   )}

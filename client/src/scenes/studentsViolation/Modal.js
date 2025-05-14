@@ -1,20 +1,33 @@
-import  { useState } from "react";
-import { Button, Input, Divider, Space, Form, Row, Col, Modal, Typography } from "antd";
+import { useState } from "react";
+import {
+  Button,
+  Input,
+  Space,
+  Form,
+  Col,
+  Modal,
+  Drawer,
+  Descriptions,
+  Tag,
+} from "antd";
 import {
   RollbackOutlined,
   CloseCircleOutlined,
   CheckCircleOutlined,
-  FormOutlined
+  FormOutlined,
 } from "@ant-design/icons";
 import { toast, Bounce } from "react-toastify";
-import moment from 'moment';
-
-const { Title } = Typography;
 const { TextArea } = Input;
 
 export const ViewDetailsMOdal = (props) => {
   const [form] = Form.useForm();
-  const { viewDetailsData, viewDetailsModal, setViewDetailsData, setViewDetailsModal, violationDataFetch } = props;
+  const {
+    viewDetailsData,
+    viewDetailsModal,
+    setViewDetailsData,
+    setViewDetailsModal,
+    violationDataFetch,
+  } = props;
   const [requestStatusChange, setRequestStatusChange] = useState(null);
   const [addNoteModal, setAddNoteModal] = useState(false);
 
@@ -54,34 +67,36 @@ export const ViewDetailsMOdal = (props) => {
         transition: Bounce,
       });
       violationDataFetch();
-      setRequestStatusChange('');
+      setRequestStatusChange("");
       setAddNoteModal(false);
-      setViewDetailsData('');
+      setViewDetailsData("");
       form.resetFields();
     }
-
   };
-  const onFinishUpdateFailed = async () => { };
+  console.log(viewDetailsData);
+  const onFinishUpdateFailed = async () => {};
   return (
     <>
       {/* <ToastContainer /> */}
-      <Modal
-        key="RequestFormDetails"
-        title="DETAILS"
-        width={1200}
-        open={viewDetailsModal}
-        onCancel={() => {
+      <Drawer
+        title="Student Violation"
+        placement="right"
+        width={900}
+        onClose={() => {
           setViewDetailsModal(false);
           setViewDetailsData();
         }}
+        open={viewDetailsModal}
+        styles={{ body: { paddingBottom: 80 } }}
         footer={[
           viewDetailsData?.violationStatus === "IN PROGRESS" ? (
             <Button
+              style={{ marginRight: "10px" }}
               type="primary"
               icon={<CheckCircleOutlined />}
               key="approve"
               onClick={() => {
-                buttonClick('COMPLETED');
+                buttonClick("COMPLETED");
               }}
             >
               COMPLETED
@@ -89,12 +104,13 @@ export const ViewDetailsMOdal = (props) => {
           ) : null,
           viewDetailsData?.violationStatus === "IN PROGRESS" ? (
             <Button
+              style={{ marginRight: "10px" }}
               type="primary"
               danger
               icon={<CloseCircleOutlined />}
               key="reject"
               onClick={() => {
-                buttonClick('INCOMPLETE');
+                buttonClick("INCOMPLETE");
               }}
             >
               INCOMPLETE
@@ -102,12 +118,13 @@ export const ViewDetailsMOdal = (props) => {
           ) : null,
           viewDetailsData?.violationStatus === "IN PROGRESS" ? (
             <Button
+              style={{ marginRight: "10px" }}
               type="primary"
               danger
               icon={<CloseCircleOutlined />}
               key="cancel"
               onClick={() => {
-                buttonClick('CANCELLED');
+                buttonClick("CANCELLED");
               }}
             >
               CANCEL
@@ -127,201 +144,67 @@ export const ViewDetailsMOdal = (props) => {
         ]}
         extra={<Space></Space>}
       >
-        <Row>
-          <Col xs={{ span: 0 }} md={{ span: 4 }}></Col>
-          <Col xs={{ span: 24 }} md={{ span: 16 }}>
-            <Divider orientation="left" orientationMargin="0" style={{ borderColor: 'blue' }}>
-              <h3>VIOLATOR DETAILS:</h3>
-            </Divider>
-            <Row gutter={12}>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  First Name
-                </Title>
-                <Input
-                  value={viewDetailsData?.firstName}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Middle Name
-                </Title>
-                <Input
-                  value={viewDetailsData?.middleName}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Last Name
-                </Title>
-                <Input
-                  value={viewDetailsData?.lastName}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-            <Row gutter={12}>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Student Id
-                </Title>
-                <Input
-                  value={viewDetailsData?.studentId}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Contact Number
-                </Title>
-                <Input
-                  value={viewDetailsData?.contact}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Gender
-                </Title>
-                <Input
-                  value={viewDetailsData?.gender}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-            <Row gutter={12}>
-              <Col xs={{ span: 24 }} md={{ span: 16 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Address
-                </Title>
-                <Input
-                  value={viewDetailsData?.address}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-            <Divider orientation="left" orientationMargin="0" style={{ borderColor: 'blue' }}>
-              <h3>VIOLATION DETAILS:</h3>
-            </Divider>
-            <Row gutter={12}>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Violation
-                </Title>
-                <Input
-                  value={viewDetailsData?.violation}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Date of Violation
-                </Title>
-                <Input
-                  value={moment(viewDetailsData?.violationDate).format('LL')}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Status
-                </Title>
-                <Input
-                  value={viewDetailsData?.violationStatus}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-            {viewDetailsData?.violationStatus === "COMPLETED" || viewDetailsData?.violationStatus === "INCOMPLETE" || viewDetailsData?.violationStatus === "CANCELLED" ? (
-              <Row gutter={12}>
-                <Col xs={{ span: 24 }} md={{ span: 24 }} layout="vertical">
-                  <Title
-                    level={5}
-                    style={{
-                      marginTop: "20px",
-                    }}
-                  >
-                    Notes
-                  </Title>
-                  <TextArea
-                    rows={3}
-                    maxLength={500}
-                    showCount
-                    placeholder="Enter Notes"
-                    value={viewDetailsData?.notes}
-                    readOnly
-                  />
-                </Col>
-              </Row>
-            ) : null}
-            <br />
-            <br />
-          </Col>
-        </Row>
-      </Modal>
+        <Descriptions
+          title="Profile Information"
+          layout="horizontal"
+          column={1}
+          bordered
+        >
+          <Descriptions.Item label="First Name">
+            {viewDetailsData?.firstName}
+          </Descriptions.Item>
+          <Descriptions.Item label="Middle Name">
+            {viewDetailsData?.middleName}
+          </Descriptions.Item>
+          <Descriptions.Item label="Last Name">
+            {viewDetailsData?.lastName}
+          </Descriptions.Item>
+          <Descriptions.Item label="Student ID">
+            {viewDetailsData?.studentId}
+          </Descriptions.Item>
+          <Descriptions.Item label="Contact Number">
+            {viewDetailsData?.contact}
+          </Descriptions.Item>
+          <Descriptions.Item label="Gender">
+            {viewDetailsData?.gender}
+          </Descriptions.Item>
+          <Descriptions.Item label="Address">
+            {viewDetailsData?.address}
+          </Descriptions.Item>
+          <Descriptions.Item label="Creation Date" span={2}>
+            {new Date(viewDetailsData.created).toLocaleString()}
+          </Descriptions.Item>
+        </Descriptions>
+        <br />
+        <Descriptions
+          title="Violation Details"
+          layout="horizontal"
+          column={1}
+          bordered
+        >
+          <Descriptions.Item label="Violation">
+            {viewDetailsData?.violation}
+          </Descriptions.Item>
+          <Descriptions.Item label="Date of Violation">
+            {viewDetailsData?.violationDate}
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            <Tag
+              color={
+                viewDetailsData?.violationStatus === "IN PROGRESS"
+                  ? "blue"
+                  : viewDetailsData?.violationStatus === "COMPLETED"
+                  ? "green"
+                  : viewDetailsData?.violationStatus === "CANCELLED"
+                  ? "red"
+                  : "orange"
+              }
+            >
+              {viewDetailsData?.violationStatus}
+            </Tag>
+          </Descriptions.Item>
+        </Descriptions>
+      </Drawer>
 
       <Modal
         key="addNotesModal"
@@ -331,7 +214,6 @@ export const ViewDetailsMOdal = (props) => {
         onCancel={() => {
           setAddNoteModal(false);
         }}
-
         footer={[
           <Button
             icon={<FormOutlined />}
@@ -349,12 +231,12 @@ export const ViewDetailsMOdal = (props) => {
             key="cancel"
             onClick={() => {
               setAddNoteModal(false);
-              setViewDetailsData('');
+              setViewDetailsData("");
               form.resetFields();
             }}
           >
             Cancel
-          </Button >,
+          </Button>,
         ]}
       >
         <Form
@@ -399,8 +281,7 @@ export const ViewDetailsMOdal = (props) => {
             <br />
           </Col>
         </Form>
-      </Modal >
-
+      </Modal>
     </>
   );
 };

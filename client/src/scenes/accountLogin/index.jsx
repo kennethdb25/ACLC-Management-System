@@ -4,8 +4,7 @@ import { Space, Drawer, Button, Form, message } from "antd";
 import useStyles from "./style";
 import LoginForm from "./LoginForm";
 import SignUp from "./SignUp";
-import { FormOutlined } from '@ant-design/icons';
-
+import { FormOutlined } from "@ant-design/icons";
 
 const AccountLogin = (props) => {
   const [form] = Form.useForm();
@@ -14,7 +13,7 @@ const AccountLogin = (props) => {
   const { LoginValidation } = props;
 
   const onFinish = async (values) => {
-    const data = await fetch('/api/registration', {
+    const data = await fetch("/api/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +44,10 @@ const AccountLogin = (props) => {
   const width = window.innerWidth;
   return (
     <Box className={classes.loginContainer}>
-      <LoginForm showSignUpForm={showSignUpForm} LoginValidation={LoginValidation} />
+      <LoginForm
+        showSignUpForm={showSignUpForm}
+        LoginValidation={LoginValidation}
+      />
       <Drawer
         title="Sign Up"
         placement="left"
@@ -64,15 +66,12 @@ const AccountLogin = (props) => {
             }
           >
             <Button type="primary" onClick={() => form.submit()}>
-              <FormOutlined style={{ marginTop: '1px' }} /> CONFIRM REGISTRATION
+              <FormOutlined style={{ marginTop: "1px" }} /> CONFIRM REGISTRATION
             </Button>
           </div>,
         ]}
       >
-        <SignUp
-          form={form}
-          onFinish={onFinish}
-        />
+        <SignUp form={form} onFinish={onFinish} />
       </Drawer>
     </Box>
   );

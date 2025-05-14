@@ -1,20 +1,35 @@
 import { useState } from "react";
-import { Button, Input, Divider, Space, Form, Row, Col, Modal, Typography } from "antd";
+import {
+  Descriptions,
+  Drawer,
+  Tag,
+  Button,
+  Input,
+  Space,
+  Form,
+  Col,
+  Modal,
+} from "antd";
 import {
   RollbackOutlined,
   CloseCircleOutlined,
   CheckCircleOutlined,
-  FormOutlined
+  FormOutlined,
 } from "@ant-design/icons";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import moment from 'moment';
 
-const { Title } = Typography;
 const { TextArea } = Input;
 
 export const ViewDetailsMOdal = (props) => {
   const [form] = Form.useForm();
-  const { viewDetailsData, viewDetailsModal, setViewDetailsData, setViewDetailsModal, loginData, appointmentDataFetch } = props;
+  const {
+    viewDetailsData,
+    viewDetailsModal,
+    setViewDetailsData,
+    setViewDetailsModal,
+    loginData,
+    appointmentDataFetch,
+  } = props;
   const [requestStatusChange, setRequestStatusChange] = useState(null);
   const [addNoteModal, setAddNoteModal] = useState(false);
 
@@ -32,13 +47,16 @@ export const ViewDetailsMOdal = (props) => {
 
   const onFinishUpdate = async (values) => {
     values.requestStatus = requestStatusChange;
-    const data = await fetch(`/api/appointments/status/${viewDetailsData._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    const data = await fetch(
+      `/api/appointments/status/${viewDetailsData._id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      }
+    );
     const res = await data.json();
 
     if (res.status === 200) {
@@ -54,60 +72,70 @@ export const ViewDetailsMOdal = (props) => {
         transition: Bounce,
       });
       appointmentDataFetch();
-      setRequestStatusChange('');
+      setRequestStatusChange("");
       setAddNoteModal(false);
-      setViewDetailsData('');
+      setViewDetailsData("");
       form.resetFields();
     }
-
   };
-  const onFinishUpdateFailed = async () => { };
+  const onFinishUpdateFailed = async () => {};
   return (
     <>
       <ToastContainer />
-      <Modal
-        key="RequestFormDetails"
-        title="DETAILS"
-        width={1200}
-        open={viewDetailsModal}
-        onCancel={() => {
+      <Drawer
+        title="Appointment Details & Status"
+        placement="right"
+        width={900}
+        onClose={() => {
           setViewDetailsModal(false);
           setViewDetailsData();
         }}
+        open={viewDetailsModal}
+        styles={{ body: { paddingBottom: 80 } }}
         footer={[
-          loginData && loginData?.body?.userType !== "STUDENT" && viewDetailsData && viewDetailsData.appointmentStatus === "PENDING" ? (
+          loginData &&
+          loginData?.body?.userType !== "STUDENT" &&
+          viewDetailsData &&
+          viewDetailsData.appointmentStatus === "PENDING" ? (
             <Button
+              style={{ marginRight: "10px" }}
               type="primary"
               icon={<CheckCircleOutlined />}
               key="approve"
               onClick={() => {
-                buttonClick('APPROVED');
+                buttonClick("APPROVED");
               }}
             >
               APPROVE
             </Button>
           ) : null,
-          loginData && loginData?.body?.userType !== "STUDENT" && viewDetailsData && viewDetailsData.appointmentStatus === "PENDING" ? (
+          loginData &&
+          loginData?.body?.userType !== "STUDENT" &&
+          viewDetailsData &&
+          viewDetailsData.appointmentStatus === "PENDING" ? (
             <Button
               type="primary"
+              style={{ marginRight: "10px" }}
               danger
               icon={<CloseCircleOutlined />}
               key="reject"
               onClick={() => {
-                buttonClick('REJECTED');
+                buttonClick("REJECTED");
               }}
             >
               REJECT
             </Button>
           ) : null,
-          loginData && loginData?.body?.userType === "STUDENT" && viewDetailsData.appointmentStatus === "PENDING" ? (
+          loginData &&
+          loginData?.body?.userType === "STUDENT" &&
+          viewDetailsData.appointmentStatus === "PENDING" ? (
             <Button
               type="primary"
               danger
               icon={<CloseCircleOutlined />}
               key="cancel"
               onClick={() => {
-                buttonClick('CANCELLED');
+                buttonClick("CANCELLED");
               }}
             >
               CANCEL
@@ -116,6 +144,7 @@ export const ViewDetailsMOdal = (props) => {
 
           <Button
             danger
+            style={{ marginRight: "10px" }}
             icon={<RollbackOutlined />}
             key="close"
             onClick={() => {
@@ -128,165 +157,68 @@ export const ViewDetailsMOdal = (props) => {
         ]}
         extra={<Space></Space>}
       >
-        <Row>
-          <Col xs={{ span: 0 }} md={{ span: 4 }}></Col>
-          <Col xs={{ span: 24 }} md={{ span: 16 }}>
-            <Row gutter={12}>
-              <Col xs={{ span: 24 }} md={{ span: 12 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Requestor Name
-                </Title>
-                <Input
-                  value={viewDetailsData?.requestorName}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 12 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                 Purpose
-                </Title>
-                <Input
-                  value={viewDetailsData?.purpose}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-            <Row gutter={12}>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Student Id
-                </Title>
-                <Input
-                  value={viewDetailsData?.studentId}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Email
-                </Title>
-                <Input
-                  value={viewDetailsData?.email}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Contact Number
-                </Title>
-                <Input
-                  value={viewDetailsData?.contact}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-            <Divider orientation="left" orientationMargin="0" style={{ borderColor: 'blue' }}>
-              <h3>REQUEST DETAILS</h3>
-            </Divider>
-            <Row gutter={12}>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Date
-                </Title>
-                <Input
-                  value={moment(viewDetailsData?.date).format('LL')}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Time
-                </Title>
-                <Input
-                  value={viewDetailsData?.time}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={{ span: 24 }} md={{ span: 8 }} layout="vertical">
-                <Title
-                  level={5}
-                  style={{
-                    marginTop: "20px",
-                  }}
-                >
-                  Request Status
-                </Title>
-                <Input
-                  value={viewDetailsData?.appointmentStatus}
-                  readOnly
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-            </Row>
-            {viewDetailsData?.appointmentStatus === "REJECTED" || viewDetailsData?.appointmentStatus === "APPROVED" || viewDetailsData?.appointmentStatus === "CANCELLED" ? (
-              <Row gutter={12}>
-                <Col xs={{ span: 24 }} md={{ span: 24 }} layout="vertical">
-                  <Title
-                    level={5}
-                    style={{
-                      marginTop: "20px",
-                    }}
-                  >
-                    {viewDetailsData?.appointmentStatus === "REJECTED" ? "Rejection Notes" : viewDetailsData?.appointmentStatus === "APPROVED" ? "Approval Notes" : "Cancellation Notes"}
-                  </Title>
-                  <TextArea
-                    rows={3}
-                    maxLength={500}
-                    showCount
-                    placeholder="Enter Notes"
-                    value={viewDetailsData?.notes}
-                    readOnly
-                  />
-                </Col>
-              </Row>
-            ) : null}
-            <br />
-            <br />
-          </Col>
-        </Row>
-      </Modal>
+        {/* User Profile */}
+        <Descriptions
+          title="Appointment Information"
+          layout="horizontal"
+          column={1}
+          bordered
+        >
+          <Descriptions.Item label="Requestor Name">
+            {viewDetailsData?.requestorName}
+          </Descriptions.Item>
+          <Descriptions.Item label="Purpose">
+            {viewDetailsData?.purpose}
+          </Descriptions.Item>
+          <Descriptions.Item label="Student ID">
+            {viewDetailsData?.studentId}
+          </Descriptions.Item>
+          <Descriptions.Item label="Email">
+            {viewDetailsData?.email}
+          </Descriptions.Item>
+          <Descriptions.Item label="Contact Number">
+            {viewDetailsData?.contact}
+          </Descriptions.Item>
+          <Descriptions.Item label="Request Creation Date">
+            {new Date(viewDetailsData?.created).toLocaleString()}
+          </Descriptions.Item>
+          <Descriptions.Item label="Date" span={2}>
+            {viewDetailsData.date}
+          </Descriptions.Item>
+          <Descriptions.Item label="Time" span={2}>
+            {viewDetailsData.time}
+          </Descriptions.Item>
+          <Descriptions.Item label="Appointment Status">
+            <Tag
+              color={
+                viewDetailsData?.appointmentStatus === "APPROVED"
+                  ? "green"
+                  : viewDetailsData?.appointmentStatus === "REJECTED"
+                  ? "red"
+                  : "orange"
+              }
+            >
+              {viewDetailsData?.appointmentStatus}
+            </Tag>
+          </Descriptions.Item>
+          {viewDetailsData?.appointmentStatus === "REJECTED" ||
+          viewDetailsData?.appointmentStatus === "APPROVED" ||
+          viewDetailsData?.appointmentStatus === "CANCELLED" ? (
+            <Descriptions.Item
+              label={
+                viewDetailsData?.appointmentStatus === "REJECTED"
+                  ? "Rejection Notes"
+                  : viewDetailsData?.appointmentStatus === "APPROVED"
+                  ? "Approval Notes"
+                  : "Cancellation Notes"
+              }
+              span={2}
+            >
+              {viewDetailsData.notes}
+            </Descriptions.Item>
+          ) : null}
+        </Descriptions>
+      </Drawer>
 
       <Modal
         key="addNotesModal"
@@ -296,7 +228,6 @@ export const ViewDetailsMOdal = (props) => {
         onCancel={() => {
           setAddNoteModal(false);
         }}
-
         footer={[
           <Button
             icon={<FormOutlined />}
@@ -314,12 +245,12 @@ export const ViewDetailsMOdal = (props) => {
             key="cancel"
             onClick={() => {
               setAddNoteModal(false);
-              setViewDetailsData('');
+              setViewDetailsData("");
               form.resetFields();
             }}
           >
             Cancel
-          </Button >,
+          </Button>,
         ]}
       >
         <Form
@@ -364,8 +295,7 @@ export const ViewDetailsMOdal = (props) => {
             <br />
           </Col>
         </Form>
-      </Modal >
-
+      </Modal>
     </>
   );
 };
