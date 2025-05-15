@@ -13,6 +13,7 @@ module.exports = function (app) {
     createProxyMiddleware({
       target:
         "https://aclc-guidance-management-sys-7ae44f42e747.herokuapp.com:8080",
+      // "http://localhost:8080",
       changeOrigin: true,
       pathFilter: "/api",
       onBeforeSetupMiddleware: undefined,
