@@ -1,26 +1,34 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import { ViolationData } from './Data';
+import { ViolationData } from "./Data";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import {
-  Table, Tag, Divider, Drawer, Input, Space, Form, Row, Col, Select, DatePicker, Radio
+  Upload,
+  message,
+  Table,
+  Tag,
+  Divider,
+  Drawer,
+  Input,
+  Space,
+  Form,
+  Row,
+  Col,
+  Select,
+  DatePicker,
+  Radio,
 } from "antd";
-import {
-  Box,
-  Button,
-  useTheme,
-} from "@mui/material";
-import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
-import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
-import {
-  SearchOutlined,
-} from "@ant-design/icons";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Box, Button, useTheme } from "@mui/material";
+import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+import { SearchOutlined } from "@ant-design/icons";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import Highlighter from "react-highlight-words";
-import moment from 'moment';
-import { ViewDetailsMOdal } from './Modal';
-import { LoginContext } from '../../context/Context';
+import moment from "moment";
+import { ViewDetailsMOdal } from "./Modal";
+import { LoginContext } from "../../context/Context";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 const { TextArea } = Input;
 
 const StudentsViolation = () => {
@@ -163,14 +171,22 @@ const StudentsViolation = () => {
   };
 
   const onFinish = async (values) => {
-    values.violationDate = values.violationDate.format("YYYY-MM-DD");
+    const formData = new FormData();
+    formData.append("file", values.agreement.file.originFileObj);
+    formData.append("violationDate", values.violationDate.format("YYYY-MM-DD"));
+    formData.append("firstName", values.firstName);
+    formData.append("middleName", values.middleName);
+    formData.append("lastName", values.lastName);
+    formData.append("studentId", values.studentId);
+    formData.append("contact", values.contact);
+    formData.append("gender", values.gender);
+    formData.append("address", values.address);
+    formData.append("violation", values.violation);
+    formData.append("sanction", values.sanction);
 
     const data = await fetch("/api/violation", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
+      body: formData,
     });
 
     const res = await data.json();
@@ -205,7 +221,7 @@ const StudentsViolation = () => {
   };
 
   const violationDataFetch = async () => {
-    const data = await fetch('/api/violation', {
+    const data = await fetch("/api/violation", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -252,10 +268,8 @@ const StudentsViolation = () => {
       key: "violationDate",
       width: "10%",
       render: (_, { violationDate }) => {
-        return (
-          moment(violationDate).format('LL')
-        );
-      }
+        return moment(violationDate).format("LL");
+      },
     },
     {
       title: "Status",
@@ -264,14 +278,14 @@ const StudentsViolation = () => {
       width: "10%",
       render: (_, { violationStatus }) => {
         let color;
-        if (violationStatus === 'COMPLETED') {
-          color = 'green';
-        } else if (violationStatus === 'INCOMPLETE') {
-          color = 'orange';
-        } else if (violationStatus === 'CANCELLED') {
-          color = 'red';
+        if (violationStatus === "COMPLETED") {
+          color = "green";
+        } else if (violationStatus === "INCOMPLETE") {
+          color = "orange";
+        } else if (violationStatus === "CANCELLED") {
+          color = "red";
         } else {
-          color = 'blue';
+          color = "blue";
         }
         return (
           <Tag color={color} key={violationStatus}>
@@ -322,6 +336,19 @@ const StudentsViolation = () => {
     },
   ];
 
+  const beforeUpload = (file) => {
+    const isDocOrPdf =
+      file.type === "application/pdf" ||
+      file.type === "application/msword" || // .doc
+      file.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; // .docx
+
+    if (!isDocOrPdf) {
+      message.error("You can only upload PDF/DOC/DOCX files!");
+      return Upload.LIST_IGNORE;
+    }
+    return true;
+  };
 
   useEffect(() => {
     violationDataFetch();
@@ -351,10 +378,18 @@ const StudentsViolation = () => {
           </Button>
         </>
       ) : null}
-      <Divider orientation="center" orientationMargin="0" style={{ borderColor: 'blue' }}>
+      <Divider
+        orientation="center"
+        orientationMargin="0"
+        style={{ borderColor: "blue" }}
+      >
         <Header subtitle="LISTS OF VIOLATIONS" />
       </Divider>
-      <Table columns={columns} dataSource={listOfViolations} pagination={paginationViolation} />
+      <Table
+        columns={columns}
+        dataSource={listOfViolations}
+        pagination={paginationViolation}
+      />
 
       {/* Set an Appointment Drawer  */}
       <Drawer
@@ -403,8 +438,8 @@ const StudentsViolation = () => {
               autoComplete="off"
               style={{
                 width: "100%",
-              }}>
-
+              }}
+            >
               <Row>
                 <Col xs={{ span: 24 }} md={{ span: 24 }}>
                   <Row gutter={12}>
@@ -426,7 +461,8 @@ const StudentsViolation = () => {
                           },
                           {
                             pattern: /^[a-zA-Z_ ]*$/,
-                            message: "Numbers or special character are not allowed",
+                            message:
+                              "Numbers or special character are not allowed",
                           },
                         ]}
                       >
@@ -447,7 +483,8 @@ const StudentsViolation = () => {
                         rules={[
                           {
                             pattern: /^[a-zA-Z_ ]*$/,
-                            message: "Numbers or special character are not allowed",
+                            message:
+                              "Numbers or special character are not allowed",
                           },
                           {
                             required: true,
@@ -476,7 +513,8 @@ const StudentsViolation = () => {
                           },
                           {
                             pattern: /^[a-zA-Z_ ]*$/,
-                            message: "Numbers or special character are not allowed",
+                            message:
+                              "Numbers or special character are not allowed",
                           },
                         ]}
                       >
@@ -520,16 +558,23 @@ const StudentsViolation = () => {
                         rules={[
                           {
                             required: true,
-                            message: "Please input your 11 digits mobile number!",
+                            message:
+                              "Please input your 11 digits mobile number!",
                           },
                           { whitespace: true },
-                          { min: 11, message: 'Contact Number must be at least 11 characters' },
-                          { max: 11, message: 'Contact Number cannot be longer than 11 characters' },
                           {
-                            pattern:
-                              /[0-9]/,
+                            min: 11,
                             message:
-                              "Invalid Character",
+                              "Contact Number must be at least 11 characters",
+                          },
+                          {
+                            max: 11,
+                            message:
+                              "Contact Number cannot be longer than 11 characters",
+                          },
+                          {
+                            pattern: /[0-9]/,
+                            message: "Invalid Character",
                           },
                         ]}
                       >
@@ -611,7 +656,7 @@ const StudentsViolation = () => {
                   >
                     <Select
                       placeholder="Select an Account Type"
-                    // onChange={onGradeChange}
+                      // onChange={onGradeChange}
                     >
                       {ViolationData.map((value, index) => (
                         <Select.Option key={index} value={value.value}>
@@ -672,6 +717,53 @@ const StudentsViolation = () => {
                       placeholder="Enter Sanction"
                     />
                   </Form.Item>
+                  <Col xs={{ span: 24 }} md={{ span: 24 }}>
+                    <Form.Item
+                      label="Incident and Report Agreement (Naming Convention: 12345789_05-20-2025_File_Agreement)"
+                      name="agreement"
+                      labelCol={{
+                        span: 24,
+                      }}
+                      wrapperCol={{
+                        span: 24,
+                      }}
+                      hasFeedback
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please add file agreement!",
+                        },
+                      ]}
+                    >
+                      <Upload
+                        beforeUpload={beforeUpload}
+                        accept=".pdf,.doc,.docx"
+                        showUploadList={true}
+                        maxCount={1}
+                        customRequest={({ file, onSuccess }) => {
+                          // Replace with your upload logic (e.g., API call)
+                          console.log("Uploading file:", file);
+                          setTimeout(() => {
+                            onSuccess("ok");
+                          }, 1000);
+                        }}
+                      >
+                        <Button
+                          sx={{
+                            backgroundColor: colors.blueAccent[500],
+                            color: colors.grey[100],
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                            padding: "10px 20px",
+                          }}
+                          onClick={() => setVisible(true)}
+                        >
+                          <FileUploadIcon sx={{ mr: "10px" }} />
+                          Upload PDF or DOC
+                        </Button>
+                      </Upload>
+                    </Form.Item>
+                  </Col>
                 </Col>
               </Row>
             </Form>
@@ -688,7 +780,7 @@ const StudentsViolation = () => {
           violationDataFetch={violationDataFetch}
         />
       ) : null}
-    </Box >
+    </Box>
   );
 };
 

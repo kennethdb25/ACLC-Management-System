@@ -7,4 +7,8 @@ export const AccountTypeData = [
     name: "GUIDANCE OFFICER",
     value: "GUIDANCE OFFICER",
   },
+  {
+    name: "TEACHER",
+    value: "TEACHER",
+  },
 ];

@@ -37,6 +37,8 @@ function App() {
   const [isSidebar, setIsSidebar] = useState(true);
   const [dashboardData, setDashboardData] = useState();
   const [upcomingData, setUpcomingData] = useState();
+  const [appointmentData, setAppointmentData] = useState();
+  const [upcomingStudentData, setUpcomingStudentData] = useState();
   const [notificationData, setNotificationData] = useState();
   const [selected, setSelected] = useState("Dashboard");
   const [isNotifDrawerVisibile, setIsNotifDrawerVisible] = useState(false);
@@ -71,7 +73,10 @@ function App() {
   const getNotifications = async () => {
     let data;
 
-    if (loginData?.body?.userType === "STUDENT") {
+    if (
+      loginData?.body?.userType === "STUDENT" ||
+      loginData?.body?.userType === "TEACHER"
+    ) {
       data = await fetch(`/api/push-notification/${loginData?.body._id}`, {
         method: "GET",
         headers: {
@@ -90,6 +95,38 @@ function App() {
 
     if (res.status === 200) {
       setNotificationData(res.body);
+    }
+  };
+
+  const appointmentDataFetch = async () => {
+    const data = await fetch(
+      `/api/dashboard/student-count?studentId=${loginData?.body?.identification}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const res = await data.json();
+
+    if (res.status === 201) {
+      setAppointmentData(res.body || []);
+    }
+
+    const upcomingData = await fetch(
+      `/api/dashboard/student-upcoming?studentId=${loginData?.body?.identification}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const upcomingRes = await upcomingData.json();
+    if (upcomingRes.status === 201) {
+      setUpcomingStudentData(upcomingRes.body || []);
     }
   };
 
@@ -113,12 +150,13 @@ function App() {
     });
 
     const upcomingRes = await upcomingData.json();
-    if (res.status === 200) {
+    if (upcomingRes.status === 200) {
       setUpcomingData(upcomingRes.body || []);
     }
   };
 
   useEffect(() => {
+    appointmentDataFetch();
     setTimeout(() => {
       LoginValidation();
     }, 3000);
@@ -193,6 +231,9 @@ function App() {
                         dashboardData={dashboardData}
                         upcomingData={upcomingData}
                         setSelected={setSelected}
+                        appointmentData={appointmentData}
+                        appointmentDataFetch={appointmentDataFetch}
+                        upcomingStudentData={upcomingStudentData}
                       />
                     }
                   />

@@ -73,8 +73,16 @@ export const ViewDetailsMOdal = (props) => {
       form.resetFields();
     }
   };
-  console.log(viewDetailsData);
+
   const onFinishUpdateFailed = async () => {};
+
+  const handleDownload = (filename) => {
+    console.log(filename);
+    window.open(
+      `/api/performance/download-agreement?filename=${filename}`,
+      "_blank"
+    );
+  };
   return (
     <>
       {/* <ToastContainer /> */}
@@ -202,6 +210,24 @@ export const ViewDetailsMOdal = (props) => {
             >
               {viewDetailsData?.violationStatus}
             </Tag>
+          </Descriptions.Item>
+          <Descriptions.Item label="Incident and Report Agreement">
+            {viewDetailsData?.agreement ? (
+              <div
+                style={{
+                  textDecorationLine: "underline",
+                  color: "blue",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  handleDownload(viewDetailsData?.agreement);
+                }}
+              >
+                Download
+              </div>
+            ) : (
+              "No File"
+            )}
           </Descriptions.Item>
         </Descriptions>
       </Drawer>

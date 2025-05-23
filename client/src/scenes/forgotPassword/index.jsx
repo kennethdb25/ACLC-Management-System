@@ -18,6 +18,7 @@ const ForgotPassword = () => {
   const [thirdStep, setThirdStep] = useState(false);
   const [fourthStep, setFourthStep] = useState(false);
   const [sendButtonLabel, setSendButtonLabel] = useState("SEND");
+  const [timeLeft, setTimeLeft] = useState(30);
 
   const classes = useStyles();
   const history = useNavigate();
@@ -45,6 +46,7 @@ const ForgotPassword = () => {
       setEmail(values.email);
       setFirstStep(false);
       setSecondtStep(true);
+      setTimeLeft(0);
       setOTP(Math.floor(100000 + Math.random() * 900000));
     } else {
       toast.error(res.body, {
@@ -68,12 +70,27 @@ const ForgotPassword = () => {
     });
   };
 
-  const sendOTP = () => {
+  const sendOTP = async () => {
     setSendButtonLabel("RESEND");
-    emailjs.send("service_m14l9oj", "template_j3pyijr", {
-      otp: OTP,
-      isUser: email,
-    }, 'ySkfc7TU25oWMJ7xH');
+    setTimeLeft(30);
+    emailjs.send(
+      "service_m14l9oj",
+      "template_j3pyijr",
+      {
+        otp: OTP,
+        isUser: email,
+      },
+      "ySkfc7TU25oWMJ7xH"
+    );
+
+    if (timeLeft === 30) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+
+      // Cleanup the interval on component unmount or when countdown ends
+      return () => clearInterval(timer);
+    }
   };
 
   const onStepTwo = (values) => {
@@ -149,7 +166,7 @@ const ForgotPassword = () => {
     }
   };
 
-  const onStepThirdFailed = (error) => { };
+  const onStepThirdFailed = (error) => {};
 
   const backToLogin = () => {
     setFourthStep(false);
@@ -204,7 +221,9 @@ const ForgotPassword = () => {
                   htmlType="submit"
                   // type="primary"
                   style={{
-                    border: "1px solid #d9d9d9", backgroundColor: "blue", color: 'white'
+                    border: "1px solid #d9d9d9",
+                    backgroundColor: "blue",
+                    color: "white",
                   }}
                 >
                   <span style={{ fontSize: "14px" }}>SUBMIT</span>
@@ -246,6 +265,17 @@ const ForgotPassword = () => {
                   style={{ borderRadius: "10px" }}
                 />
               </Form.Item>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {timeLeft > 0 ? `00:${timeLeft}` : ""}
+              </div>
+              <br />
               <Form.Item>
                 <div
                   style={{
@@ -266,6 +296,7 @@ const ForgotPassword = () => {
                     <span style={{ fontSize: "14px" }}>SUBMIT</span>
                   </Button>
                   <Button
+                    disabled={timeLeft > 0 ? true : false}
                     type="primary"
                     style={{
                       border: "1px solid #d9d9d9",
@@ -372,7 +403,9 @@ const ForgotPassword = () => {
                   htmlType="submit"
                   // type="primary"
                   style={{
-                    border: "1px solid #d9d9d9", backgroundColor: "blue", color: 'white'
+                    border: "1px solid #d9d9d9",
+                    backgroundColor: "blue",
+                    color: "white",
                   }}
                 >
                   CONFIRM
@@ -390,7 +423,9 @@ const ForgotPassword = () => {
               // type="primary"
               style={{
                 border: "1px solid #d9d9d9",
-                marginTop: "20px", backgroundColor: "blue", color: 'white'
+                marginTop: "20px",
+                backgroundColor: "blue",
+                color: "white",
               }}
               onClick={backToLogin}
             >

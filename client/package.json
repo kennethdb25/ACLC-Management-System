@@ -45,6 +45,7 @@
     "react-scripts": "5.0.1",
     "react-toastify": "^11.0.3",
     "reactstrap": "^9.2.3",
+    "recharts": "^2.15.3",
     "web-vitals": "^2.1.4",
     "yup": "^0.32.11"
   },

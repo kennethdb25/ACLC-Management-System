@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ViolationSchema = new mongoose.Schema({
   studentId: {
@@ -50,8 +50,10 @@ const ViolationSchema = new mongoose.Schema({
   notes: {
     type: String,
   },
+  agreement: {
+    type: String,
+  },
 });
-
 
 const ViolationModel = new mongoose.model("Violation", ViolationSchema);
 

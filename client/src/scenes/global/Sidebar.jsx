@@ -11,14 +11,13 @@ import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import HistoryToggleOffOutlinedIcon from '@mui/icons-material/HistoryToggleOffOutlined';
-import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
-import { LoginContext } from '../../context/Context';
+import HistoryToggleOffOutlinedIcon from "@mui/icons-material/HistoryToggleOffOutlined";
+import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
+import { LoginContext } from "../../context/Context";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
 
   return (
     <MenuItem
@@ -65,7 +64,7 @@ const Sidebar = (props) => {
         },
       }}
     >
-      <ProSidebar collapsed={isCollapsed} style={{ height: '100vh' }}>
+      <ProSidebar collapsed={isCollapsed} style={{ height: "100vh" }}>
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
           <MenuItem
@@ -119,7 +118,7 @@ const Sidebar = (props) => {
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Tooltip title="Dashboard">
-              <p style={{ margin: '0' }}>
+              <p style={{ margin: "0" }}>
                 <Item
                   title="Dashboard"
                   to="/dashboard"
@@ -129,19 +128,18 @@ const Sidebar = (props) => {
                 />
               </p>
             </Tooltip>
-            {loginData?.body?.userType !== 'STUDENT' ? (
+            {loginData?.body?.userType !== "STUDENT" &&
+            loginData?.body?.userType !== "TEACHER" ? (
               <>
                 <Typography
                   variant="h6"
                   color={colors.grey[300]}
                   sx={{ m: "15px 0 5px 20px" }}
                 >
-
                   Data
-
                 </Typography>
                 <Tooltip title="Manage Accounts">
-                  <p style={{ margin: '0' }}>
+                  <p style={{ margin: "0" }}>
                     <Item
                       title="Manage Accounts"
                       to="/accounts"
@@ -152,7 +150,7 @@ const Sidebar = (props) => {
                   </p>
                 </Tooltip>
                 <Tooltip title="Students Information">
-                  <p style={{ margin: '0' }}>
+                  <p style={{ margin: "0" }}>
                     <Item
                       title="Students Information"
                       to="/students-information"
@@ -163,7 +161,7 @@ const Sidebar = (props) => {
                   </p>
                 </Tooltip>
                 <Tooltip title="Reports">
-                  <p style={{ margin: '0' }}>
+                  <p style={{ margin: "0" }}>
                     <Item
                       title="Reports"
                       to="/reports"
@@ -183,9 +181,9 @@ const Sidebar = (props) => {
             >
               Pages
             </Typography>
-            {loginData?.body?.userType !== 'STUDENT' ? (
+            {loginData?.body?.userType !== "STUDENT" ? (
               <Tooltip title="Performance">
-                <p style={{ margin: '0' }}>
+                <p style={{ margin: "0" }}>
                   <Item
                     title="Performance"
                     to="/form"
@@ -196,21 +194,25 @@ const Sidebar = (props) => {
                 </p>
               </Tooltip>
             ) : null}
-            <Tooltip title="Request an Appointment">
-              <p style={{ margin: '0' }}>
-                <Item
-                  title="Request an Appointment"
-                  to="/appointment"
-                  icon={<CalendarTodayOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-              </p>
-            </Tooltip>
-            {loginData?.body?.userType !== 'STUDENT' ? (
+
+            {loginData?.body?.userType !== "TEACHER" ? (
+              <Tooltip title="Request an Appointment">
+                <p style={{ margin: "0" }}>
+                  <Item
+                    title="Request an Appointment"
+                    to="/appointment"
+                    icon={<CalendarTodayOutlinedIcon />}
+                    selected={selected}
+                    setSelected={setSelected}
+                  />
+                </p>
+              </Tooltip>
+            ) : null}
+            {loginData?.body?.userType !== "STUDENT" &&
+            loginData?.body?.userType !== "TEACHER" ? (
               <>
                 <Tooltip title="Student Violations">
-                  <p style={{ margin: '0' }}>
+                  <p style={{ margin: "0" }}>
                     <Item
                       title="Student Violations"
                       to="/violation"
@@ -221,7 +223,7 @@ const Sidebar = (props) => {
                   </p>
                 </Tooltip>
                 <Tooltip title="Login History">
-                  <p style={{ margin: '0' }}>
+                  <p style={{ margin: "0" }}>
                     <Item
                       title="Login History"
                       to="/history"
@@ -234,7 +236,7 @@ const Sidebar = (props) => {
               </>
             ) : null}
             <Tooltip title="FAQ Page">
-              <p style={{ margin: '0' }}>
+              <p style={{ margin: "0" }}>
                 <Item
                   title="FAQ Page"
                   to="/faq"

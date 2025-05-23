@@ -15,7 +15,9 @@ import {
   CloseCircleOutlined,
   CheckCircleOutlined,
   FormOutlined,
+  ClockCircleOutlined,
 } from "@ant-design/icons";
+import emailjs from "@emailjs/browser";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 
 const { TextArea } = Input;
@@ -46,6 +48,7 @@ export const ViewDetailsMOdal = (props) => {
   };
 
   const onFinishUpdate = async (values) => {
+    console.log(values);
     values.requestStatus = requestStatusChange;
     const data = await fetch(
       `/api/appointments/status/${viewDetailsData._id}`,
@@ -71,11 +74,27 @@ export const ViewDetailsMOdal = (props) => {
         theme: "light",
         transition: Bounce,
       });
-      appointmentDataFetch();
-      setRequestStatusChange("");
-      setAddNoteModal(false);
-      setViewDetailsData("");
-      form.resetFields();
+
+      if (values.requestStatus === "APPROVED") {
+        await emailjs.send(
+          "service_m14l9oj",
+          "template_b3d5ve6",
+          {
+            name: viewDetailsData.requestorName,
+            purpose: viewDetailsData?.purpose,
+            email: viewDetailsData?.email,
+            date: viewDetailsData?.date,
+            time: viewDetailsData?.time,
+          },
+          "ySkfc7TU25oWMJ7xH"
+        );
+
+        appointmentDataFetch();
+        setRequestStatusChange("");
+        setAddNoteModal(false);
+        setViewDetailsData("");
+        form.resetFields();
+      }
     }
   };
   const onFinishUpdateFailed = async () => {};
@@ -107,6 +126,23 @@ export const ViewDetailsMOdal = (props) => {
               }}
             >
               APPROVE
+            </Button>
+          ) : null,
+          loginData &&
+          loginData?.body?.userType === "GUIDANCE OFFICER" &&
+          viewDetailsData &&
+          viewDetailsData.appointmentStatus === "APPROVED" &&
+          new Date(viewDetailsData.date) > new Date() ? (
+            <Button
+              type="primary"
+              style={{ marginRight: "10px" }}
+              icon={<ClockCircleOutlined />}
+              key="reject"
+              onClick={() => {
+                buttonClick("RESCHEDULE");
+              }}
+            >
+              RESCHEDULE
             </Button>
           ) : null,
           loginData &&
@@ -195,6 +231,8 @@ export const ViewDetailsMOdal = (props) => {
                   ? "green"
                   : viewDetailsData?.appointmentStatus === "REJECTED"
                   ? "red"
+                  : viewDetailsData?.appointmentStatus === "RESCHEDULE"
+                  ? "yellow"
                   : "orange"
               }
             >
@@ -203,6 +241,7 @@ export const ViewDetailsMOdal = (props) => {
           </Descriptions.Item>
           {viewDetailsData?.appointmentStatus === "REJECTED" ||
           viewDetailsData?.appointmentStatus === "APPROVED" ||
+          viewDetailsData?.appointmentStatus === "RESCHEDULE" ||
           viewDetailsData?.appointmentStatus === "CANCELLED" ? (
             <Descriptions.Item
               label={
@@ -210,6 +249,8 @@ export const ViewDetailsMOdal = (props) => {
                   ? "Rejection Notes"
                   : viewDetailsData?.appointmentStatus === "APPROVED"
                   ? "Approval Notes"
+                  : viewDetailsData?.appointmentStatus === "RESCHEDULE"
+                  ? "Rescheduled Notes"
                   : "Cancellation Notes"
               }
               span={2}

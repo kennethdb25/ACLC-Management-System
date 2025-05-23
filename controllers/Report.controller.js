@@ -221,16 +221,95 @@ const GetDashboardCardCount = async (req, res) => {
   }
 };
 
+const GetDashboardCardCountPerStudent = async (req, res) => {
+  const id = req.query.studentId || "";
+  try {
+    const data = await AppointmentModel.aggregate([
+      {
+        $match: {
+          studentId: id,
+        },
+      },
+      {
+        $group: {
+          _id: "$appointmentStatus",
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+    ]);
+
+    const allStatuses = {
+      Approved: 0,
+      Pending: 0,
+      Rejected: 0,
+      Rescheduled: 0,
+    };
+
+    data.forEach(({ _id, count }) => {
+      const key = _id.trim().toLowerCase();
+      if (key === "approved") allStatuses.Approved = count;
+      if (key === "pending") allStatuses.Pending = count;
+      if (key === "rejected") allStatuses.Rejected = count;
+      if (key === "reschedule" || key === "rescheduled")
+        allStatuses.Rescheduled = count;
+    });
+
+    // Convert to desired format for chart
+    const formatted = Object.entries(allStatuses).map(([name, value]) => ({
+      name,
+      value,
+    }));
+    return res.status(201).json({ status: 201, body: formatted });
+  } catch (error) {
+    console.log(error);
+    return res.status(422).json(error);
+  }
+};
+
+const getUpcomingStudentAppointment = async (req, res) => {
+  const id = req.query.studentId || "";
+  try {
+    let upcomingData = [];
+    const today = new Date();
+    const rangeDate = new Date(today);
+    rangeDate.setFullYear(today.getFullYear() + 1);
+
+    const getAppointments = await AppointmentModel.find({
+      studentId: id,
+      appointmentStatus: "APPROVED",
+      created: { $gte: today, $lte: rangeDate },
+    })
+      .sort({ created: 1 })
+      .limit(8);
+
+    getAppointments.map((data) => {
+      upcomingData.push({
+        txId: data.studentId,
+        user: data.requestorName,
+        date: data.date,
+        cost: "ACCEPTED",
+      });
+    });
+
+    return res.status(201).json({ status: 201, body: upcomingData });
+  } catch (error) {
+    console.log(error);
+    return res.status(422).json(error);
+  }
+};
+
 const getUpcomingAppointment = async (req, res) => {
   try {
-    const upcomingData = [];
+    let upcomingData = [];
     const today = new Date();
     const rangeDate = new Date(today);
     rangeDate.setFullYear(today.getFullYear() + 1);
 
     const getAppointments = await AppointmentModel.find({
       appointmentStatus: "APPROVED",
-      date: { $gte: today, $lte: rangeDate },
+      created: { $gte: today, $lte: rangeDate },
     })
       .sort({ created: 1 })
       .limit(8);
@@ -256,5 +335,7 @@ module.exports = {
   GetAllReport,
   DownloadReport,
   GetDashboardCardCount,
+  GetDashboardCardCountPerStudent,
+  getUpcomingStudentAppointment,
   getUpcomingAppointment,
 };

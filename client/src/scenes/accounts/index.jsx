@@ -261,6 +261,8 @@ const Accounts = () => {
           color = "red";
         } else if (userType === "GUIDANCE OFFICER") {
           color = "blue";
+        } else if (userType === "TEACHER") {
+          color = "yellow";
         } else {
           color = "green";
         }
@@ -282,6 +284,10 @@ const Accounts = () => {
         {
           text: "STUDENT",
           value: "STUDENT",
+        },
+        {
+          text: "TEACHER",
+          value: "TEACHER",
         },
       ],
       onFilter: (value, record) => record.userType.indexOf(value) === 0,

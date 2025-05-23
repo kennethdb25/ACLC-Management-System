@@ -1,11 +1,25 @@
 import { useState, useContext, useRef, useEffect } from "react";
 import { Box, useTheme, Button } from "@mui/material";
 import { ToastContainer, toast, Bounce } from "react-toastify";
-import NoteAddOutlinedIcon from '@mui/icons-material/NoteAddOutlined';
-import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { tokens } from '../../theme';
-import { Table, Divider, Drawer, Space, Form, Row, Col, Input, Tag, Radio, InputNumber, Popconfirm, message } from "antd";
+import NoteAddOutlinedIcon from "@mui/icons-material/NoteAddOutlined";
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { tokens } from "../../theme";
+import {
+  Table,
+  Divider,
+  Drawer,
+  Space,
+  Form,
+  Row,
+  Col,
+  Input,
+  Tag,
+  Radio,
+  InputNumber,
+  Popconfirm,
+  message,
+} from "antd";
 import {
   MinusCircleOutlined,
   PlusOutlined,
@@ -13,10 +27,10 @@ import {
 } from "@ant-design/icons";
 // import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import { LoginContext } from '../../context/Context';
+import { LoginContext } from "../../context/Context";
 import Highlighter from "react-highlight-words";
 // import moment from 'moment';
-import { ViewDetailsMOdal } from './Modal';
+import { ViewDetailsMOdal } from "./Modal";
 // import dayjs from 'dayjs';
 
 const RequestForm = () => {
@@ -48,7 +62,6 @@ const RequestForm = () => {
     subjects: updateData?.subjects,
   };
 
-
   //Pagination
   let requestCount = 0;
   for (var request in requestForms) {
@@ -65,7 +78,7 @@ const RequestForm = () => {
   });
 
   const getRequestForms = async () => {
-    const data = await fetch('/api/performance/all', {
+    const data = await fetch("/api/performance/all", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -94,15 +107,18 @@ const RequestForm = () => {
   };
 
   const onCloseUpdate = () => {
-    setUpdateData('');
-    setViewDetailsData('');
+    setUpdateData("");
+    setViewDetailsData("");
     setViewUpdateModal(false);
     form.resetFields();
   };
 
   const onFinish = async (values) => {
     const correct = values.subjects.map((value) => {
-      value.status = value['Grade(%)'] >= 75 && value['Attendance(%)'] >= 75 ? "Passing" : "Failing";
+      value.status =
+        value["Grade(%)"] >= 75 && value["Attendance(%)"] >= 75
+          ? "Passing"
+          : "Failing";
       return value;
     });
     values.subjects = correct;
@@ -119,7 +135,7 @@ const RequestForm = () => {
     if (res.status === 200) {
       // getRequestForms();
       setVisible(false);
-      setRequestForms('');
+      setRequestForms("");
       form.resetFields();
       toast.success("Added Successfully", {
         position: "top-center",
@@ -287,12 +303,12 @@ const RequestForm = () => {
       width: "10%",
       render: (_, { status }) => {
         let color;
-        if (status === 'Completed') {
-          color = 'green';
-        } else if (status === 'Added') {
-          color = 'blue';
+        if (status === "Completed") {
+          color = "green";
+        } else if (status === "Added") {
+          color = "blue";
         } else {
-          color = 'red';
+          color = "red";
         }
         return (
           <Tag color={color} key={status}>
@@ -349,7 +365,10 @@ const RequestForm = () => {
 
   const onFinishUpdate = async (values) => {
     const correct = values.subjects.map((value) => {
-      value.status = value['Grade(%)'] >= 75 && value['Attendance(%)'] >= 75 ? "Passing" : "Failing";
+      value.status =
+        value["Grade(%)"] >= 75 && value["Attendance(%)"] >= 75
+          ? "Passing"
+          : "Failing";
       return value;
     });
     values.subjects = correct;
@@ -392,9 +411,9 @@ const RequestForm = () => {
     }
   };
 
-  const cancel = e => {
+  const cancel = (e) => {
     console.log(e);
-    message.info('CANCELLED');
+    message.info("CANCELLED");
   };
 
   useEffect(() => {
@@ -407,8 +426,12 @@ const RequestForm = () => {
   return (
     <Box m="20px">
       <ToastContainer />
-      <Header title="Monitoring Academic Performance" subtitle="Student Academic Perfomance" />
-      {loginData?.body?.userType === "GUIDANCE OFFICER" ? (
+      <Header
+        title="Monitoring Academic Performance"
+        subtitle="Student Academic Perfomance"
+      />
+      {loginData?.body?.userType === "GUIDANCE OFFICER" ||
+      loginData?.body?.userType === "TEACHER" ? (
         <>
           <Popconfirm
             title="ADD STUDENT"
@@ -428,7 +451,9 @@ const RequestForm = () => {
                 fontWeight: "bold",
                 padding: "10px 20px",
               }}
-              onClick={() => { form.resetFields(); }}
+              onClick={() => {
+                form.resetFields();
+              }}
             >
               <NoteAddOutlinedIcon sx={{ mr: "10px" }} />
               ADD STUDENT
@@ -436,15 +461,23 @@ const RequestForm = () => {
           </Popconfirm>
         </>
       ) : null}
-      <Divider orientation="center" orientationMargin="0" style={{ borderColor: 'blue' }}>
+      <Divider
+        orientation="center"
+        orientationMargin="0"
+        style={{ borderColor: "blue" }}
+      >
         <Header subtitle="PERFORMANCE LISTS" />
       </Divider>
-      <Table columns={columns} dataSource={requestForms} pagination={paginationRequest} />
+      <Table
+        columns={columns}
+        dataSource={requestForms}
+        pagination={paginationRequest}
+      />
 
       {/* Request Form Drawer  */}
       <Drawer
         title="ADD STUDENT"
-        placement={width >= 450 ? 'right' : 'left'}
+        placement={width >= 450 ? "right" : "left"}
         onClose={onClose}
         open={visible}
         height="100%"
@@ -490,7 +523,11 @@ const RequestForm = () => {
                 width: "100%",
               }}
             >
-              <Divider orientation="left" orientationMargin="0" style={{ borderColor: 'blue' }}>
+              <Divider
+                orientation="left"
+                orientationMargin="0"
+                style={{ borderColor: "blue" }}
+              >
                 <h3>STUDENT INFORMATION</h3>
               </Divider>
               <Row gutter={12}>
@@ -557,13 +594,19 @@ const RequestForm = () => {
                         message: "Please input your 11 digits mobile number!",
                       },
                       { whitespace: true },
-                      { min: 11, message: 'Contact Number must be at least 11 characters' },
-                      { max: 11, message: 'Contact Number cannot be longer than 11 characters' },
                       {
-                        pattern:
-                          /[0-9]/,
+                        min: 11,
                         message:
-                          "Invalid Character",
+                          "Contact Number must be at least 11 characters",
+                      },
+                      {
+                        max: 11,
+                        message:
+                          "Contact Number cannot be longer than 11 characters",
+                      },
+                      {
+                        pattern: /[0-9]/,
+                        message: "Invalid Character",
                       },
                     ]}
                   >
@@ -645,7 +688,8 @@ const RequestForm = () => {
                     <Input placeholder="Enter adviser name" />
                   </Form.Item>
                 </Col>
-              </Row><Row gutter={12}>
+              </Row>
+              <Row gutter={12}>
                 <Col xs={24} md={8} layout="vertical">
                   <Form.Item
                     label="Course"
@@ -693,34 +737,60 @@ const RequestForm = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Divider orientation="left" orientationMargin="0" style={{ borderColor: 'blue' }}>
+              <Divider
+                orientation="left"
+                orientationMargin="0"
+                style={{ borderColor: "blue" }}
+              >
                 <h3>PERFORMANCE INFORMATION</h3>
               </Divider>
               <Form.List name="subjects">
                 {(fields, { add, remove }) => (
                   <>
                     {fields.map(({ key, name, ...restField }) => (
-                      <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='start'>
+                      <Space
+                        key={key}
+                        style={{ display: "flex", marginBottom: 8 }}
+                        align="start"
+                      >
                         <Form.Item
                           {...restField}
-                          name={[name, 'Subject']}
-                          rules={[{ required: true, message: "Missing Subject Name" }]}
+                          name={[name, "Subject"]}
+                          rules={[
+                            { required: true, message: "Missing Subject Name" },
+                          ]}
                         >
-                          <Input placeholder='Subject Name' />
+                          <Input placeholder="Subject Name" />
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          name={[name, 'Grade(%)']}
-                          rules={[{ required: true, type: "number", min: 0, max: 100, message: '0-100 only' }]}
+                          name={[name, "Grade(%)"]}
+                          rules={[
+                            {
+                              required: true,
+                              type: "number",
+                              min: 0,
+                              max: 100,
+                              message: "0-100 only",
+                            },
+                          ]}
                         >
-                          <InputNumber placeholder='Grade' />
+                          <InputNumber placeholder="Grade" />
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          name={[name, 'Attendance(%)']}
-                          rules={[{ required: true, type: "number", min: 0, max: 100, message: '0-100 only' }]}
+                          name={[name, "Attendance(%)"]}
+                          rules={[
+                            {
+                              required: true,
+                              type: "number",
+                              min: 0,
+                              max: 100,
+                              message: "0-100 only",
+                            },
+                          ]}
                         >
-                          <InputNumber placeholder='Attendance' />
+                          <InputNumber placeholder="Attendance" />
                         </Form.Item>
                         <MinusCircleOutlined onClick={() => remove(name)} />
                       </Space>
@@ -752,7 +822,7 @@ const RequestForm = () => {
 
       <Drawer
         title="UPDATE STUDENT RECORD"
-        placement={width >= 450 ? 'right' : 'left'}
+        placement={width >= 450 ? "right" : "left"}
         onClose={onCloseUpdate}
         open={viewUpdateModal}
         height="100%"
@@ -799,7 +869,11 @@ const RequestForm = () => {
                 width: "100%",
               }}
             >
-              <Divider orientation="left" orientationMargin="0" style={{ borderColor: 'blue' }}>
+              <Divider
+                orientation="left"
+                orientationMargin="0"
+                style={{ borderColor: "blue" }}
+              >
                 <h3>STUDENT INFORMATION</h3>
               </Divider>
               <Row gutter={12}>
@@ -866,13 +940,19 @@ const RequestForm = () => {
                         message: "Please input your 11 digits mobile number!",
                       },
                       { whitespace: true },
-                      { min: 11, message: 'Contact Number must be at least 11 characters' },
-                      { max: 11, message: 'Contact Number cannot be longer than 11 characters' },
                       {
-                        pattern:
-                          /[0-9]/,
+                        min: 11,
                         message:
-                          "Invalid Character",
+                          "Contact Number must be at least 11 characters",
+                      },
+                      {
+                        max: 11,
+                        message:
+                          "Contact Number cannot be longer than 11 characters",
+                      },
+                      {
+                        pattern: /[0-9]/,
+                        message: "Invalid Character",
                       },
                     ]}
                   >
@@ -954,7 +1034,8 @@ const RequestForm = () => {
                     <Input placeholder="Enter adviser name" />
                   </Form.Item>
                 </Col>
-              </Row><Row gutter={12}>
+              </Row>
+              <Row gutter={12}>
                 <Col xs={24} md={8} layout="vertical">
                   <Form.Item
                     label="Course"
@@ -1002,34 +1083,60 @@ const RequestForm = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              <Divider orientation="left" orientationMargin="0" style={{ borderColor: 'blue' }}>
+              <Divider
+                orientation="left"
+                orientationMargin="0"
+                style={{ borderColor: "blue" }}
+              >
                 <h3>PERFORMANCE INFORMATION</h3>
               </Divider>
               <Form.List name="subjects">
                 {(fields, { add, remove }) => (
                   <>
                     {fields.map(({ key, name, ...restField }) => (
-                      <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='start'>
+                      <Space
+                        key={key}
+                        style={{ display: "flex", marginBottom: 8 }}
+                        align="start"
+                      >
                         <Form.Item
                           {...restField}
-                          name={[name, 'Subject']}
-                          rules={[{ required: true, message: "Missing Subject Name" }]}
+                          name={[name, "Subject"]}
+                          rules={[
+                            { required: true, message: "Missing Subject Name" },
+                          ]}
                         >
-                          <Input placeholder='Subject Name' />
+                          <Input placeholder="Subject Name" />
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          name={[name, 'Grade(%)']}
-                          rules={[{ required: true, type: "number", min: 0, max: 100, message: '0-100 only' }]}
+                          name={[name, "Grade(%)"]}
+                          rules={[
+                            {
+                              required: true,
+                              type: "number",
+                              min: 0,
+                              max: 100,
+                              message: "0-100 only",
+                            },
+                          ]}
                         >
-                          <InputNumber placeholder='Grade' />
+                          <InputNumber placeholder="Grade" />
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          name={[name, 'Attendance(%)']}
-                          rules={[{ required: true, type: "number", min: 0, max: 100, message: '0-100 only' }]}
+                          name={[name, "Attendance(%)"]}
+                          rules={[
+                            {
+                              required: true,
+                              type: "number",
+                              min: 0,
+                              max: 100,
+                              message: "0-100 only",
+                            },
+                          ]}
                         >
-                          <InputNumber placeholder='Attendance' />
+                          <InputNumber placeholder="Attendance" />
                         </Form.Item>
                         <MinusCircleOutlined onClick={() => remove(name)} />
                       </Space>
@@ -1071,10 +1178,8 @@ const RequestForm = () => {
           toUpdateRecord={toUpdateRecord}
         />
       ) : null}
-    </Box >
+    </Box>
   );
 };
-
-
 
 export default RequestForm;

@@ -373,6 +373,8 @@ const Calendar = () => {
           color = "green";
         } else if (appointmentStatus === "PENDING") {
           color = "blue";
+        } else if (appointmentStatus === "RESCHEDULE") {
+          color = "yellow";
         } else {
           color = "red";
         }

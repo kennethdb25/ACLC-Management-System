@@ -2,6 +2,7 @@ const AppointmentModel = require("../models/AppointmentModel");
 const NotificationModel = require("../models/NotificationModel");
 const PerformanceModel = require("../models/PerformanceModel");
 const ViolationModel = require("../models/ViolationModel");
+const path = require("path");
 
 const AddPerformance = async (req, res) => {
   try {
@@ -24,12 +25,10 @@ const AddPerformance = async (req, res) => {
     return res.status(200).json({ status: 200, body: finalRecord });
   } catch (error) {
     console.log(error);
-    return res
-      .status(422)
-      .json({
-        status: 422,
-        body: "Something went wrong. Please contact the administrator",
-      });
+    return res.status(422).json({
+      status: 422,
+      body: "Something went wrong. Please contact the administrator",
+    });
   }
 };
 
@@ -52,11 +51,9 @@ const updatePerformanceRecord = async (req, res) => {
     );
 
     if (!updated) {
-      return res
-        .status(401)
-        .json({
-          body: "Something went wrong. Please contact your Administrator!",
-        });
+      return res.status(401).json({
+        body: "Something went wrong. Please contact your Administrator!",
+      });
     }
 
     return res.status(200).json({ status: 200, body: updated });
@@ -64,6 +61,17 @@ const updatePerformanceRecord = async (req, res) => {
     console.log(error);
     return res.status(404).json(error);
   }
+};
+
+const HandleDownloadAgreement = async (req, res) => {
+  const file = req.query.filename || "";
+  const pathFile = path.join(__dirname, `../uploads/${file}`);
+  res.download(pathFile, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: "An error occured" });
+    }
+  });
 };
 
 const getAppointmentsPerStudent = async (req, res) => {
@@ -113,7 +121,7 @@ const addAnAppointment = async (req, res) => {
       userId,
       purpose,
       appointmentStatus: "PENDING",
-      created: new Date(),
+      created: new Date(date),
     });
 
     const data = await appointmentDetails.save();
@@ -132,12 +140,10 @@ const addAnAppointment = async (req, res) => {
     return res.status(200).json({ status: 200, body: data });
   } catch (error) {
     console.log(error);
-    return res
-      .status(422)
-      .json({
-        status: 422,
-        body: "Something went wrong. Please contact the administrator",
-      });
+    return res.status(422).json({
+      status: 422,
+      body: "Something went wrong. Please contact the administrator",
+    });
   }
 };
 
@@ -148,11 +154,9 @@ const updateAppointmentStatus = async (req, res) => {
     const getRequestForm = await AppointmentModel.findOne({ _id: id });
 
     if (!getRequestForm) {
-      return res
-        .status(401)
-        .json({
-          body: "Something went wrong. Please contact your Administrator!",
-        });
+      return res.status(401).json({
+        body: "Something went wrong. Please contact your Administrator!",
+      });
     }
 
     getRequestForm.appointmentStatus = requestStatus;
@@ -181,6 +185,7 @@ const addViolation = async (req, res) => {
       violation,
       violationDate,
     } = req.body;
+    const { originalname } = req.file;
 
     const violationDetails = new ViolationModel({
       address,
@@ -195,18 +200,17 @@ const addViolation = async (req, res) => {
       violationDate,
       violationStatus: "IN PROGRESS",
       created: new Date(),
+      agreement: `${originalname}`,
     });
 
     const data = await violationDetails.save();
     return res.status(200).json({ status: 200, body: data });
   } catch (error) {
     console.log(error);
-    return res
-      .status(422)
-      .json({
-        status: 422,
-        body: "Something went wrong. Please contact the administrator",
-      });
+    return res.status(422).json({
+      status: 422,
+      body: "Something went wrong. Please contact the administrator",
+    });
   }
 };
 
@@ -227,11 +231,9 @@ const updateViolationStatus = async (req, res) => {
     const getViolation = await ViolationModel.findOne({ _id: id });
 
     if (!getViolation) {
-      return res
-        .status(401)
-        .json({
-          body: "Something went wrong. Please contact your Administrator!",
-        });
+      return res.status(401).json({
+        body: "Something went wrong. Please contact your Administrator!",
+      });
     }
 
     getViolation.violationStatus = requestStatus;
@@ -297,11 +299,9 @@ const updateNotification = async (req, res) => {
   try {
     const getNotification = await NotificationModel.findOne({ _id: id });
     if (!getNotification) {
-      return res
-        .status(500)
-        .json({
-          body: "Something went wrong. Please contact your Administrator!",
-        });
+      return res.status(500).json({
+        body: "Something went wrong. Please contact your Administrator!",
+      });
     }
     getNotification.adminRead = "Yes";
 
@@ -318,6 +318,7 @@ module.exports = {
   AddPerformance,
   GetPerformanceList,
   updatePerformanceRecord,
+  HandleDownloadAgreement,
   getAppointmentsPerStudent,
   getAllAppointments,
   addAnAppointment,
