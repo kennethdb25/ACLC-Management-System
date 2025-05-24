@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import { Form, Input, Row, Col, Typography, Button } from "antd";
@@ -17,13 +17,14 @@ const ForgotPassword = () => {
   const [secondStep, setSecondtStep] = useState(false);
   const [thirdStep, setThirdStep] = useState(false);
   const [fourthStep, setFourthStep] = useState(false);
-  const [sendButtonLabel, setSendButtonLabel] = useState("SEND");
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [secondsLeft, setSecondsLeft] = useState(60);
+  const [canResend, setCanResend] = useState(false);
 
   const classes = useStyles();
   const history = useNavigate();
 
   const onStepOne = async (values) => {
+    setOTP(Math.floor(100000 + Math.random() * 900000));
     const data = await fetch(`/api/forgot-password/${values?.email}`, {
       method: "GET",
       headers: {
@@ -46,8 +47,15 @@ const ForgotPassword = () => {
       setEmail(values.email);
       setFirstStep(false);
       setSecondtStep(true);
-      setTimeLeft(0);
-      setOTP(Math.floor(100000 + Math.random() * 900000));
+      emailjs.send(
+        "service_m14l9oj",
+        "template_j3pyijr",
+        {
+          otp: OTP,
+          isUser: values.email,
+        },
+        "ySkfc7TU25oWMJ7xH"
+      );
     } else {
       toast.error(res.body, {
         position: "top-center",
@@ -71,8 +79,9 @@ const ForgotPassword = () => {
   };
 
   const sendOTP = async () => {
-    setSendButtonLabel("RESEND");
-    setTimeLeft(30);
+    console.log("OTP Resent!");
+    setSecondsLeft(60);
+    setCanResend(false);
     emailjs.send(
       "service_m14l9oj",
       "template_j3pyijr",
@@ -82,15 +91,6 @@ const ForgotPassword = () => {
       },
       "ySkfc7TU25oWMJ7xH"
     );
-
-    if (timeLeft === 30) {
-      const timer = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
-
-      // Cleanup the interval on component unmount or when countdown ends
-      return () => clearInterval(timer);
-    }
   };
 
   const onStepTwo = (values) => {
@@ -109,7 +109,6 @@ const ForgotPassword = () => {
       });
       setSecondtStep(false);
       setThirdStep(true);
-      setSendButtonLabel("Send");
     } else {
       toast.error("INVALID OTP", {
         position: "top-center",
@@ -173,6 +172,19 @@ const ForgotPassword = () => {
     setFirstStep(true);
     history("/");
   };
+
+  useEffect(() => {
+    if (secondsLeft === 0) {
+      setCanResend(true);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setSecondsLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [secondsLeft]);
 
   return (
     <Box className={classes.forgotPassContainer}>
@@ -273,7 +285,7 @@ const ForgotPassword = () => {
                   alignItems: "center",
                 }}
               >
-                {timeLeft > 0 ? `00:${timeLeft}` : ""}
+                {secondsLeft > 0 ? `00:${secondsLeft}` : ""}
               </div>
               <br />
               <Form.Item>
@@ -296,14 +308,14 @@ const ForgotPassword = () => {
                     <span style={{ fontSize: "14px" }}>SUBMIT</span>
                   </Button>
                   <Button
-                    disabled={timeLeft > 0 ? true : false}
+                    disabled={!canResend ? true : false}
                     type="primary"
                     style={{
                       border: "1px solid #d9d9d9",
                     }}
                     onClick={sendOTP}
                   >
-                    {sendButtonLabel}
+                    RESEND
                   </Button>
                 </div>
               </Form.Item>
